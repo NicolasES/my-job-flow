@@ -1,6 +1,6 @@
-import type { ReactNode } from "react"
+import { Link, Outlet } from "react-router-dom"
 
-function MainLayout({ children }: { children: ReactNode }) {
+function MainLayout() {
     return (
         <div className="h-screen flex flex-col bg-slate-900 text-slate-100 font-sans">
             <header className="flex items-center justify-between px-8 py-4 bg-slate-900 border-b border-slate-700">
@@ -16,22 +16,22 @@ function MainLayout({ children }: { children: ReactNode }) {
                     {/* Links de Navegação */}
                     <nav className="flex gap-6 text-sm font-medium text-slate-400">
                         {/* O link ativo geralmente tem cor diferente e uma bordinha embaixo */}
-                        <a href="#" className="text-white border-b-2 border-blue-500 pb-1">Dashboard</a>
-                        <a href="#" className="hover:text-white transition-colors pb-1">Configurações</a>
+                        <Link to="/" className="text-white border-b-2 border-blue-500 pb-1">Dashboard</Link>
+                        <Link to="/configurations" className="hover:text-white transition-colors pb-1">Configurações</Link>
                     </nav>
                 </div>
 
                 {/* Direita: Botões e Perfil */}
                 <div className="flex items-center gap-6">
-                    <button className="px-4 py-2 text-sm font-medium text-white bg-slate-800 border border-slate-600 rounded-md hover:bg-slate-700 transition-colors">
+                    <Link to="/new-job" className="px-4 py-2 text-sm font-medium text-white bg-slate-800 border border-slate-600 rounded-md hover:bg-slate-700 transition-colors">
                         Adicionar Vaga
-                    </button>
+                    </Link>
                 </div>
 
             </header>
 
             <main className="flex-1 overflow-hidden flex flex-col">
-                {children}
+                <Outlet />
             </main>
         </div>
     )
