@@ -1,4 +1,7 @@
+import { useState } from 'react'
+
 import { SelectInput } from "../components/form/SelectInput"
+import { SkillAutocomplete } from "../components/form/SkillAutocomplete"
 import { SkillTag } from "../components/form/SkillTag"
 import { TextAreaInput } from "../components/form/TextAreaInput"
 import { TextInput } from "../components/form/TextInput"
@@ -10,6 +13,30 @@ const workModelOptions = [
 ]
 
 export default function NewJob() {
+    const [mandatorySkills, setMandatorySkills] = useState<string[]>([])
+    const [recommendedSkills, setRecommendedSkills] = useState<string[]>([])
+
+    const addMandatorySkill = (skill: string) => {
+        if (!mandatorySkills.includes(skill)) {
+            setMandatorySkills([...mandatorySkills, skill])
+        }
+    }
+
+    const addRecommendedSkill = (skill: string) => {
+        if (!recommendedSkills.includes(skill)) {
+            setRecommendedSkills([...recommendedSkills, skill])
+        }
+    }
+
+    const removeMandatorySkill = (skillToRemove: string) => {
+        setMandatorySkills(mandatorySkills.filter(skill => skill !== skillToRemove));
+    }
+
+    const removeRecommendedSkill = (skillToRemove: string) => {
+        setRecommendedSkills(recommendedSkills.filter(skill => skill !== skillToRemove));
+    }
+
+
     return (
         <div className="flex flex-col h-full p-8 overflow-y-auto custom-scrollbar">
             {/* Page Header */}
@@ -49,7 +76,12 @@ export default function NewJob() {
                             placeholder="ex: 15000"
                         />
 
-                        <TextInput type="date" label="Data de Candidatura" id="appliedAt" />
+                        <TextInput
+                            type="date"
+                            label="Data de Candidatura"
+                            id="appliedAt"
+                            defaultValue={new Date().toISOString().split('T')[0]}
+                        />
                     </section>
 
                 </div>
@@ -83,14 +115,18 @@ export default function NewJob() {
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-slate-300 mb-2">Obrigatórias</label>
                             <div className="bg-slate-900 border border-slate-600 rounded-md p-3 flex flex-wrap gap-2 items-center min-h-[60px]">
-                                {/* Mocked data */}
-                                <SkillTag label="React" />
-                                <SkillTag label="Node.js" />
+                                {mandatorySkills.map(skill => (
+                                    <SkillTag
+                                        key={skill}
+                                        label={skill}
+                                        onRemove={() => removeMandatorySkill(skill)} // Passamos a função de remoção aqui!
+                                    />
+                                ))}
 
-                                {/* Add button placeholder */}
-                                <button type="button" className="text-slate-400 hover:text-white px-2 ml-1 text-lg">
-                                    +
-                                </button>
+                                <SkillAutocomplete
+                                    onAddSkill={addMandatorySkill}
+                                    alreadySelected={mandatorySkills}
+                                />
                             </div>
                         </div>
 
@@ -98,13 +134,18 @@ export default function NewJob() {
                         <div>
                             <label className="block text-sm font-medium text-slate-300 mb-2">Recomendadas</label>
                             <div className="bg-slate-900 border border-slate-600 rounded-md p-3 flex flex-wrap gap-2 items-center min-h-[60px]">
-                                {/* Mocked data */}
-                                <SkillTag label="TypeScript" />
-                                <SkillTag label="Figma" />
+                                {recommendedSkills.map(skill => (
+                                    <SkillTag
+                                        key={skill}
+                                        label={skill}
+                                        onRemove={() => removeRecommendedSkill(skill)}
+                                    />
+                                ))}
 
-                                <button type="button" className="text-slate-400 hover:text-white px-2 ml-1 text-lg">
-                                    +
-                                </button>
+                                <SkillAutocomplete
+                                    onAddSkill={addRecommendedSkill}
+                                    alreadySelected={recommendedSkills}
+                                />
                             </div>
                         </div>
                     </section>
