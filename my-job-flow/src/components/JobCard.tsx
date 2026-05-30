@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 export type JobCardData = {
     id: number;
     title: string;
@@ -15,8 +17,13 @@ export interface JobCardProps {
 
 export function JobCard({ jobData, availableStatuses, onMoveJob }: JobCardProps) {
     const { id, title, company, location, date, status } = jobData;
+    const navigate = useNavigate();
+
     return (
-        <div className="bg-slate-800 p-4 rounded-lg border border-slate-700 hover:border-slate-600 cursor-pointer transition-colors">
+        <div 
+            onClick={() => navigate(`/job/${id}`)}
+            className="bg-slate-800 p-4 rounded-lg border border-slate-700 hover:border-slate-600 cursor-pointer transition-colors"
+        >
 
             {/* Title and Select Dropdown */}
             <div className="flex justify-between items-start mb-2 gap-2">

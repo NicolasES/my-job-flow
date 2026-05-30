@@ -4,6 +4,7 @@ import MainLayout from "./layouts/MainLayout"
 import Dashboard from "./pages/Dashboard"
 import NewJob from "./pages/NewJob"
 import Configurations from "./pages/Configurations"
+import JobDetails from "./pages/JobDetails"
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
       {
         path: 'configurations',
         element: <Configurations />
+      },
+      {
+        path: 'job/:id',
+        element: <JobDetails />
       }
     ]
   }
