@@ -1,4 +1,4 @@
-import { Link, Outlet } from "react-router-dom"
+import { Link, Outlet, NavLink } from "react-router-dom"
 
 function MainLayout() {
     return (
@@ -16,8 +16,27 @@ function MainLayout() {
                     {/* Links de Navegação */}
                     <nav className="flex gap-6 text-sm font-medium text-slate-400">
                         {/* O link ativo geralmente tem cor diferente e uma bordinha embaixo */}
-                        <Link to="/" className="text-white border-b-2 border-blue-500 pb-1">Dashboard</Link>
-                        <Link to="/configurations" className="hover:text-white transition-colors pb-1">Configurações</Link>
+                        <NavLink
+                            to="/"
+                            className={({ isActive }) =>
+                                isActive
+                                    ? "text-white border-b-2 border-blue-500 pb-1"
+                                    : "hover:text-white transition-colors pb-1"
+                            }
+                        >
+                            Dashboard
+                        </NavLink>
+
+                        <NavLink
+                            to="/configurations"
+                            className={({ isActive }) =>
+                                isActive
+                                    ? "text-white border-b-2 border-blue-500 pb-1"
+                                    : "hover:text-white transition-colors pb-1"
+                            }
+                        >
+                            Configurações
+                        </NavLink>
                     </nav>
                 </div>
 
