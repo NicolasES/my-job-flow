@@ -1,11 +1,13 @@
-import { JobCard, type JobCardProps } from "./JobCard";
+import { JobCard, type JobCardData } from "./JobCard";
 
 interface KanbanColumnProps {
     title: string;
-    jobs: Array<{ id: number } & JobCardProps>
+    jobs: JobCardData[];
+    availableStatuses: string[];
+    onMoveJob: (id: number, newStatus: string) => void;
 }
 
-export function KanbanColumn({ title, jobs }: KanbanColumnProps) {
+export function KanbanColumn({ title, jobs, availableStatuses, onMoveJob }: KanbanColumnProps) {
     return (
         <div className="min-w-[320px] max-w-[320px] flex flex-col gap-4">
             <div className="flex items-center justify-between">
@@ -18,12 +20,17 @@ export function KanbanColumn({ title, jobs }: KanbanColumnProps) {
                 {jobs.map((job) => (
                     <JobCard
                         key={job.id}
-                        title={job.title}
-                        company={job.company}
-                        location={job.location}
-                        date={job.date}
+                        jobData={job}
+                        availableStatuses={availableStatuses}
+                        onMoveJob={onMoveJob}
                     />
                 ))}
+
+                {jobs.length === 0 && (
+                    <div className="border-2 border-dashed border-slate-700 rounded-lg p-6 text-center text-sm text-slate-500">
+                        Nenhuma vaga nesta etapa.
+                    </div>
+                )}
 
             </div>
 
