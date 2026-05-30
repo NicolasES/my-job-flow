@@ -13,7 +13,7 @@ interface SelectInputProps extends SelectHTMLAttributes<HTMLSelectElement> {
 
 export function SelectInput({ label, id, options, ...rest }: SelectInputProps) {
     return (
-        <div className="mb-4">
+        <div>
             <label htmlFor={id} className="block text-sm font-medium text-slate-300 mb-1">
                 {label}
             </label>

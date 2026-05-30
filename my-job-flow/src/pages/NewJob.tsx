@@ -54,34 +54,36 @@ export default function NewJob() {
                     <section className="bg-slate-800 p-6 rounded-lg border border-slate-700">
                         <h2 className="text-lg font-medium text-white mb-4">Dados da Vaga</h2>
 
-                        {/* Using our new reusable component */}
-                        <TextInput
-                            label="Título da Vaga"
-                            id="title"
-                            placeholder="ex: Desenvolvedor React Sênior"
-                        />
+                        <div className='flex flex-col gap-4'>
+                            {/* Using our new reusable component */}
+                            <TextInput
+                                label="Título da Vaga"
+                                id="title"
+                                placeholder="ex: Desenvolvedor React Sênior"
+                            />
 
-                        <TextAreaInput
-                            label="Descrição"
-                            id="description"
-                            rows={6}
-                            placeholder="Descrição da vaga aqui..."
-                        />
+                            <TextAreaInput
+                                label="Descrição"
+                                id="description"
+                                rows={6}
+                                placeholder="Descrição da vaga aqui..."
+                            />
 
-                        {/* Reusing the component again! */}
-                        <TextInput
-                            label="Salário Ofertado (BRL)"
-                            id="salary"
-                            type="number"
-                            placeholder="ex: 15000"
-                        />
+                            {/* Reusing the component again! */}
+                            <TextInput
+                                label="Salário Ofertado (BRL)"
+                                id="salary"
+                                type="number"
+                                placeholder="ex: 15000"
+                            />
 
-                        <TextInput
-                            type="date"
-                            label="Data de Candidatura"
-                            id="appliedAt"
-                            defaultValue={new Date().toISOString().split('T')[0]}
-                        />
+                            <TextInput
+                                type="date"
+                                label="Data de Candidatura"
+                                id="appliedAt"
+                                defaultValue={new Date().toISOString().split('T')[0]}
+                            />
+                        </div>
                     </section>
 
                 </div>
@@ -93,18 +95,19 @@ export default function NewJob() {
                     <section className="bg-slate-800 p-6 rounded-lg border border-slate-700">
                         <h2 className="text-lg font-medium text-white mb-4">Empresa e Localização</h2>
 
-                        <TextInput
-                            label="Empresa"
-                            id="company"
-                            placeholder="Nome da empresa"
-                        />
+                        <div className='flex flex-col gap-4'>
+                            <TextInput
+                                label="Empresa"
+                                id="company"
+                                placeholder="Nome da empresa"
+                            />
 
-                        <SelectInput
-                            label="Modelo de Trabalho"
-                            id="workModel"
-                            options={workModelOptions}
-                        />
-
+                            <SelectInput
+                                label="Modelo de Trabalho"
+                                id="workModel"
+                                options={workModelOptions}
+                            />
+                        </div>
                     </section>
 
                     {/* Card: Competencies */}

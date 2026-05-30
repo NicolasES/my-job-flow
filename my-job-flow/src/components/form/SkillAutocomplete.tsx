@@ -45,7 +45,7 @@ export function SkillAutocomplete({ onAddSkill, alreadySelected = [] }: SkillAut
     };
 
     return (
-        <div className="relative w-full max-w-sm mt-2" ref={wrapperRef}>
+        <div className="relative w-full max-w-sm" ref={wrapperRef}>
             <input
                 type="text"
                 value={inputValue}
