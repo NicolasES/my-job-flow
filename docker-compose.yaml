@@ -1,0 +1,24 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: myjobflow-frontend
+    working_dir: /app/my-job-flow
+    volumes:
+      - .:/app
+    ports:
+      - "5173:5173"
+    command: sleep infinity
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: myjobflow-api
+    working_dir: /app/api
+    volumes:
+      - .:/app
+    ports:
+      - "3333:3333"
+    command: sleep infinity
