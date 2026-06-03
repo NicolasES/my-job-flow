@@ -1,10 +1,16 @@
 import fastify, { type FastifyInstance } from 'fastify'
+import { serializerCompiler, validatorCompiler, type ZodTypeProvider } from "fastify-type-provider-zod"
+import { globalErrorHandler } from "./errors/errorHandler"
 
 export default class Application {
-    public fastify: FastifyInstance
+    public fastify: FastifyInstance<any, any, any, any, ZodTypeProvider>
 
     constructor() {
-        this.fastify = fastify({ logger: true })
+        this.fastify = fastify({ logger: true }).withTypeProvider<ZodTypeProvider>()
+        this.fastify.setValidatorCompiler(validatorCompiler)
+        this.fastify.setSerializerCompiler(serializerCompiler)
+
+        this.fastify.setErrorHandler(globalErrorHandler);
     }
 
     start(port: number = 3333) {
