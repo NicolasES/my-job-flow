@@ -8,7 +8,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "target": "esnext",
-    "types": [],
+    "types": ["node", "jest"],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
@@ -34,7 +34,9 @@
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
+    "esModuleInterop": true,
     "skipLibCheck": true,
+    "ignoreDeprecations": "6.0",
     "baseUrl": "./",
     "paths": {
       "@/*": [
