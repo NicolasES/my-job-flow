@@ -19,4 +19,16 @@ export class JobStatusPrismaRepository implements JobStatusRepositoryInterface {
             order: created.order
         });
     }
+
+    async findAll(): Promise<JobStatus[]> {
+        const statuses = await this.prismaClient.jobStatus.findMany({
+            orderBy: { order: 'asc' }
+        });
+
+        return statuses.map(status => new JobStatus({
+            id: status.id,
+            name: status.name,
+            order: status.order
+        }));
+    }
 }

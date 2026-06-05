@@ -4,15 +4,13 @@ import type { JobStatusRepositoryInterface } from '@/repositories/interfaces/Job
 import { JobStatus } from '@/entities/JobStatus';
 
 describe('CreateJobStatus UseCase', () => {
-    let mockRepository: jest.Mocked<JobStatusRepositoryInterface>;
+    let mockRepository: JobStatusRepositoryInterface;
     let useCase: CreateJobStatus;
 
     beforeEach(() => {
         mockRepository = {
-            create: jest.fn<JobStatusRepositoryInterface['create']>().mockImplementation(async (jobStatus: JobStatus) => {
-                return new JobStatus({ id: 99, name: jobStatus.getName(), order: jobStatus.getOrder() });
-            }),
-        } as jest.Mocked<JobStatusRepositoryInterface>;
+            create: jest.fn<JobStatusRepositoryInterface['create']>().mockResolvedValue(new JobStatus({ id: 99, name: 'In Progress', order: 2 }))
+        } as unknown as JobStatusRepositoryInterface;
         useCase = new CreateJobStatus(mockRepository);
     });
 

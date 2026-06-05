@@ -7,4 +7,5 @@ export default function registerRoutes({ fastify }: Application) {
     const jobStatusController = container.resolve<JobStatusController>('JobStatusController');
 
     fastify.post('/job-status', createJobStatusSchema, (req, rep) => jobStatusController.create(req.body as any, rep));
+    fastify.get('/job-status', (req, rep) => jobStatusController.findAll(req, rep));
 }

@@ -4,6 +4,7 @@ import { container } from 'tsyringe';
 import { prisma } from '@/repositories/prisma';
 import { JobStatusPrismaRepository } from '@/repositories/JobStatusPrismaRepository';
 import { CreateJobStatus } from '@/usecases/CreateJobStatus';
+import { FindAllJobStatus } from '@/usecases/FindAllJobStatus';
 import { JobStatusController } from '@/controllers/JobStatusController';
 
 // 1. Prisma Client Singleton
@@ -18,10 +19,16 @@ container.register('JobStatusRepositoryInterface', {
 container.register('CreateJobStatus', {
     useFactory: (c) => new CreateJobStatus(c.resolve('JobStatusRepositoryInterface'))
 });
+container.register('FindAllJobStatus', {
+    useFactory: (c) => new FindAllJobStatus(c.resolve('JobStatusRepositoryInterface'))
+});
 
 // 4. Controllers
 container.register('JobStatusController', {
-    useFactory: (c) => new JobStatusController(c.resolve('CreateJobStatus'))
+    useFactory: (c) => new JobStatusController(
+        c.resolve('CreateJobStatus'),
+        c.resolve('FindAllJobStatus')
+    )
 });
 
 export { container };
