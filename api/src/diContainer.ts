@@ -5,6 +5,7 @@ import { prisma } from '@/repositories/prisma';
 import { JobStatusPrismaRepository } from '@/repositories/JobStatusPrismaRepository';
 import { CreateJobStatus } from '@/usecases/CreateJobStatus';
 import { FindAllJobStatus } from '@/usecases/FindAllJobStatus';
+import { ReorderJobStatus } from '@/usecases/ReorderJobStatus';
 import { JobStatusController } from '@/controllers/JobStatusController';
 
 // 1. Prisma Client Singleton
@@ -22,12 +23,16 @@ container.register('CreateJobStatus', {
 container.register('FindAllJobStatus', {
     useFactory: (c) => new FindAllJobStatus(c.resolve('JobStatusRepositoryInterface'))
 });
+container.register('ReorderJobStatus', {
+    useFactory: (c) => new ReorderJobStatus(c.resolve('JobStatusRepositoryInterface'))
+});
 
 // 4. Controllers
 container.register('JobStatusController', {
     useFactory: (c) => new JobStatusController(
         c.resolve('CreateJobStatus'),
-        c.resolve('FindAllJobStatus')
+        c.resolve('FindAllJobStatus'),
+        c.resolve('ReorderJobStatus')
     )
 });
 

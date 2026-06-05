@@ -31,4 +31,15 @@ export class JobStatusPrismaRepository implements JobStatusRepositoryInterface {
             order: status.order
         }));
     }
+
+    async updateOrders(items: { id: number; order: number; }[]): Promise<void> {
+        await this.prismaClient.$transaction(
+            items.map(item =>
+                this.prismaClient.jobStatus.update({
+                    where: { id: item.id },
+                    data: { order: item.order }
+                })
+            )
+        );
+    }
 }
