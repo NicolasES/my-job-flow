@@ -1,0 +1,27 @@
+import { container } from 'tsyringe';
+
+// Importa as classes puras do nosso projeto
+import { prisma } from '@/repositories/prisma';
+import { JobStatusPrismaRepository } from '@/repositories/JobStatusPrismaRepository';
+import { CreateJobStatus } from '@/usecases/CreateJobStatus';
+import { JobStatusController } from '@/controllers/JobStatusController';
+
+// 1. Prisma Client Singleton
+container.registerInstance('PrismaClient', prisma);
+
+// 2. Repositories
+container.register('JobStatusRepositoryInterface', {
+    useFactory: (c) => new JobStatusPrismaRepository(c.resolve('PrismaClient'))
+});
+
+// 3. Use Cases
+container.register('CreateJobStatus', {
+    useFactory: (c) => new CreateJobStatus(c.resolve('JobStatusRepositoryInterface'))
+});
+
+// 4. Controllers
+container.register('JobStatusController', {
+    useFactory: (c) => new JobStatusController(c.resolve('CreateJobStatus'))
+});
+
+export { container };
