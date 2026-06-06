@@ -18,6 +18,8 @@ model JobStatus {
   order    Int
   createAt DateTime @default(now())
 
+  jobs Job[]
+
   @@map("job_statuses")
 }
 
@@ -26,5 +28,66 @@ model Skill {
   name     String   @unique
   createAt DateTime @default(now())
 
+  mandatoryForJobs   Job[] @relation("MandatorySkills")
+  recommendedForJobs Job[] @relation("RecommendedSkills")
+
   @@map("skills")
+}
+
+model Job {
+  id          Int      @id @default(autoincrement())
+  title       String
+  company     String
+  workModel   String
+  salary      Float?
+  description String
+  appliedAt   DateTime
+  createdAt   DateTime @default(now())
+
+  statusId Int
+  status   JobStatus @relation(fields: [statusId], references: [id])
+
+  comments JobComment[]
+  contacts JobContact[]
+  links    JobLink[]
+
+  mandatorySkills   Skill[] @relation("MandatorySkills")
+  recommendedSkills Skill[] @relation("RecommendedSkills")
+
+  @@map("jobs")
+}
+
+model JobComment {
+  id   Int      @id @default(autoincrement())
+  text String
+  date DateTime @default(now())
+
+  jobId Int
+  job   Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@map("job_comments")
+}
+
+model JobContact {
+  id       Int     @id @default(autoincrement())
+  name     String
+  role     String
+  linkedin String?
+  phone    String?
+
+  jobId Int
+  job   Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@map("job_contacts")
+}
+
+model JobLink {
+  id    Int    @id @default(autoincrement())
+  title String
+  url   String
+
+  jobId Int
+  job   Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@map("job_links")
 }
