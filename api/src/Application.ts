@@ -9,7 +9,8 @@ export default class Application {
     constructor() {
         this.fastify = fastify({ logger: true }).withTypeProvider<ZodTypeProvider>()
         this.fastify.register(cors, {
-            origin: true
+            origin: true,
+            methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
         })
         this.fastify.setValidatorCompiler(validatorCompiler)
         this.fastify.setSerializerCompiler(serializerCompiler)

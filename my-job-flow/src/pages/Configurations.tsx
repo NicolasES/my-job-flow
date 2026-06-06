@@ -1,47 +1,80 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TextInput } from "../components/form/TextInput";
 import { SkillTag } from "../components/form/SkillTag";
-
-interface Status {
-    id: string;
-    name: string;
-}
+import { JobStatusService, type JobStatus } from "../services/JobStatusService";
 
 export default function Configurations() {
-    const [statuses, setStatuses] = useState<Status[]>([
-        { id: '1', name: 'Enviado' },
-        { id: '2', name: 'Entrevista Inicial' },
-        { id: '3', name: 'Proposta' }
-    ]);
+    const [statuses, setStatuses] = useState<JobStatus[]>([]);
     const [newStatusName, setNewStatusName] = useState("");
-    const [editingStatusId, setEditingStatusId] = useState<string | null>(null);
+    const [editingStatusId, setEditingStatusId] = useState<number | null>(null);
     const [editingStatusText, setEditingStatusText] = useState("");
 
-    const handleAddStatus = () => {
+    useEffect(() => {
+        const loadStatuses = async () => {
+            try {
+                const data = await JobStatusService.findAll();
+                setStatuses(data.sort((a, b) => a.order - b.order));
+            } catch (err: any) {
+                alert(`Erro ao carregar status: ${err.message}`);
+            }
+        };
+        loadStatuses();
+    }, []);
+
+    const handleAddStatus = async () => {
         if (!newStatusName.trim()) return;
-        const newStatus: Status = { id: Date.now().toString(), name: newStatusName };
-        setStatuses([...statuses, newStatus]);
-        setNewStatusName("");
+        try {
+            const nextOrder = statuses.length > 0 ? Math.max(...statuses.map(s => s.order)) + 1 : 0;
+            const newStatus = await JobStatusService.create(newStatusName, nextOrder);
+            setStatuses([...statuses, newStatus]);
+            setNewStatusName("");
+        } catch (err: any) {
+            alert(`Erro ao criar status: ${err.message}`);
+        }
     };
 
-    const handleRemoveStatus = (idToRemove: string) => {
-        setStatuses(statuses.filter(status => status.id !== idToRemove));
+    const handleRemoveStatus = async (idToRemove: number) => {
+        try {
+            await JobStatusService.delete(idToRemove);
+            setStatuses(statuses.filter(status => status.id !== idToRemove));
+        } catch (err: any) {
+            alert(`Erro ao deletar status: ${err.message}`);
+        }
     };
 
-    const handleSaveEditStatus = () => {
-        setStatuses(statuses.map(s => s.id === editingStatusId ? { ...s, name: editingStatusText } : s));
-        setEditingStatusId(null);
+    const handleSaveEditStatus = async () => {
+        if (editingStatusId === null) return;
+        try {
+            const updated = await JobStatusService.update(editingStatusId, editingStatusText);
+            setStatuses(statuses.map(s => s.id === editingStatusId ? updated : s));
+            setEditingStatusId(null);
+        } catch (err: any) {
+            alert(`Erro ao atualizar status: ${err.message}`);
+        }
     };
 
-    const handleMoveStatus = (index: number, direction: 'up' | 'down') => {
+    const handleMoveStatus = async (index: number, direction: 'up' | 'down') => {
         if (direction === 'up' && index === 0) return;
         if (direction === 'down' && index === statuses.length - 1) return;
 
         const newStatuses = [...statuses];
         const targetIndex = direction === 'up' ? index - 1 : index + 1;
 
-        [newStatuses[index], newStatuses[targetIndex]] = [newStatuses[targetIndex], newStatuses[index]];
+        const currentOrder = newStatuses[index].order;
+        const targetOrder = newStatuses[targetIndex].order;
+
+        newStatuses[index].order = targetOrder;
+        newStatuses[targetIndex].order = currentOrder;
+
+        newStatuses.sort((a, b) => a.order - b.order);
         setStatuses(newStatuses);
+
+        try {
+            const payload = newStatuses.map(s => ({ id: s.id, order: s.order }));
+            await JobStatusService.reorder(payload);
+        } catch (err: any) {
+            alert(`Erro ao reordenar status: ${err.message}`);
+        }
     };
 
     const [skills, setSkills] = useState<string[]>(['React', 'Node.js', 'TypeScript', 'Docker', 'Python', 'Figma']);
