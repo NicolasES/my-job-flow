@@ -10,12 +10,21 @@ import { UpdateJobStatus } from '@/usecases/UpdateJobStatus';
 import { DeleteJobStatus } from '@/usecases/DeleteJobStatus';
 import { JobStatusController } from '@/controllers/JobStatusController';
 
+import { SkillPrismaRepository } from '@/repositories/SkillPrismaRepository';
+import { CreateSkill } from '@/usecases/CreateSkill';
+import { FindAllSkills } from '@/usecases/FindAllSkills';
+import { DeleteSkill } from '@/usecases/DeleteSkill';
+import { SkillController } from '@/controllers/SkillController';
+
 // 1. Prisma Client Singleton
 container.registerInstance('PrismaClient', prisma);
 
 // 2. Repositories
 container.register('JobStatusRepositoryInterface', {
-    useFactory: (c) => new JobStatusPrismaRepository(c.resolve('PrismaClient'))
+    useValue: new JobStatusPrismaRepository(prisma)
+});
+container.register('SkillRepositoryInterface', {
+    useValue: new SkillPrismaRepository(prisma)
 });
 
 // 3. Use Cases
@@ -35,6 +44,16 @@ container.register('DeleteJobStatus', {
     useFactory: (c) => new DeleteJobStatus(c.resolve('JobStatusRepositoryInterface'))
 });
 
+container.register('CreateSkill', {
+    useFactory: (c) => new CreateSkill(c.resolve('SkillRepositoryInterface'))
+});
+container.register('FindAllSkills', {
+    useFactory: (c) => new FindAllSkills(c.resolve('SkillRepositoryInterface'))
+});
+container.register('DeleteSkill', {
+    useFactory: (c) => new DeleteSkill(c.resolve('SkillRepositoryInterface'))
+});
+
 // 4. Controllers
 container.register('JobStatusController', {
     useFactory: (c) => new JobStatusController(
@@ -43,6 +62,13 @@ container.register('JobStatusController', {
         c.resolve('ReorderJobStatus'),
         c.resolve('UpdateJobStatus'),
         c.resolve('DeleteJobStatus')
+    )
+});
+container.register('SkillController', {
+    useFactory: (c) => new SkillController(
+        c.resolve('CreateSkill'),
+        c.resolve('FindAllSkills'),
+        c.resolve('DeleteSkill')
     )
 });
 

@@ -20,3 +20,11 @@ model JobStatus {
 
   @@map("job_statuses")
 }
+
+model Skill {
+  id       Int      @id @default(autoincrement())
+  name     String   @unique
+  createAt DateTime @default(now())
+
+  @@map("skills")
+}
