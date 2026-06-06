@@ -7,17 +7,20 @@ import { CreateJobStatus } from "@/usecases/CreateJobStatus";
 import { FindAllJobStatus } from "@/usecases/FindAllJobStatus";
 import { ReorderJobStatus } from "@/usecases/ReorderJobStatus";
 import { UpdateJobStatus } from "@/usecases/UpdateJobStatus";
+import { DeleteJobStatus } from "@/usecases/DeleteJobStatus";
 
 import type { UpdateJobStatusParams, UpdateJobStatusBody } from "@/request-validations/updateJobStatusSchema";
 import type { CreateJobStatusBody } from "@/request-validations/createJobStatusSchema";
 import type { ReorderJobStatusBody } from "@/request-validations/reorderJobStatusSchema";
+import type { DeleteJobStatusParams } from "@/request-validations/deleteJobStatusSchema";
 
 export class JobStatusController {
     constructor(
         private readonly createJobStatusUseCase: CreateJobStatus,
         private readonly findAllJobStatusUseCase: FindAllJobStatus,
         private readonly reorderJobStatusUseCase: ReorderJobStatus,
-        private readonly updateJobStatusUseCase: UpdateJobStatus
+        private readonly updateJobStatusUseCase: UpdateJobStatus,
+        private readonly deleteJobStatusUseCase: DeleteJobStatus
     ) { }
 
     async create(request: ZodRequest<{ Body: CreateJobStatusBody }>, reply: FastifyReply) {
@@ -38,5 +41,10 @@ export class JobStatusController {
     async update(request: ZodRequest<{ Params: UpdateJobStatusParams, Body: UpdateJobStatusBody }>, reply: FastifyReply) {
         const updated = await this.updateJobStatusUseCase.execute(request.params.id, request.body);
         return reply.status(200).send(updated);
+    }
+
+    async delete(request: ZodRequest<{ Params: DeleteJobStatusParams }>, reply: FastifyReply) {
+        await this.deleteJobStatusUseCase.execute(request.params.id);
+        return reply.status(204).send();
     }
 }

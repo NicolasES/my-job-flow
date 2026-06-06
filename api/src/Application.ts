@@ -1,4 +1,5 @@
 import fastify, { type FastifyInstance } from 'fastify'
+import cors from '@fastify/cors'
 import { serializerCompiler, validatorCompiler, type ZodTypeProvider } from "fastify-type-provider-zod"
 import { globalErrorHandler } from "./errors/errorHandler"
 
@@ -7,9 +8,11 @@ export default class Application {
 
     constructor() {
         this.fastify = fastify({ logger: true }).withTypeProvider<ZodTypeProvider>()
+        this.fastify.register(cors, {
+            origin: true
+        })
         this.fastify.setValidatorCompiler(validatorCompiler)
         this.fastify.setSerializerCompiler(serializerCompiler)
-
         this.fastify.setErrorHandler(globalErrorHandler);
     }
 

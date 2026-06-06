@@ -72,4 +72,10 @@ export class JobStatusPrismaRepository implements JobStatusRepositoryInterface {
             order: updated.order
         });
     }
+
+    async delete(id: number): Promise<void> {
+        await this.prismaClient.jobStatus.delete({
+            where: { id }
+        });
+    }
 }
