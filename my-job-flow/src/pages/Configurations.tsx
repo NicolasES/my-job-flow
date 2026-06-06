@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { TextInput } from "../components/form/TextInput";
 import { SkillTag } from "../components/form/SkillTag";
 import { JobStatusService, type JobStatus } from "../services/JobStatusService";
+import { SkillService, type Skill } from "../services/SkillService";
 
 export default function Configurations() {
     const [statuses, setStatuses] = useState<JobStatus[]>([]);
@@ -18,7 +19,18 @@ export default function Configurations() {
                 alert(`Erro ao carregar status: ${err.message}`);
             }
         };
+
+        const loadSkills = async () => {
+            try {
+                const data = await SkillService.findAll();
+                setSkills(data);
+            } catch (err: any) {
+                alert(`Erro ao carregar skills: ${err.message}`);
+            }
+        };
+
         loadStatuses();
+        loadSkills();
     }, []);
 
     const handleAddStatus = async () => {
@@ -77,17 +89,34 @@ export default function Configurations() {
         }
     };
 
-    const [skills, setSkills] = useState<string[]>(['React', 'Node.js', 'TypeScript', 'Docker', 'Python', 'Figma']);
+    const [skills, setSkills] = useState<Skill[]>([]);
     const [newSkillName, setNewSkillName] = useState("");
 
-    const handleAddSkill = () => {
-        if (!newSkillName.trim() || skills.includes(newSkillName.trim())) return;
-        setSkills([...skills, newSkillName.trim()]);
-        setNewSkillName("");
+    const handleAddSkill = async () => {
+        const name = newSkillName.trim();
+        if (!name) return;
+
+        if (skills.some(s => s.name.toLowerCase() === name.toLowerCase())) {
+            alert('Esta competência já está cadastrada na lista.');
+            return;
+        }
+
+        try {
+            const newSkill = await SkillService.create(name);
+            setSkills([...skills, newSkill]);
+            setNewSkillName("");
+        } catch (err: any) {
+            alert(`Erro ao adicionar skill: ${err.message}`);
+        }
     };
 
-    const handleRemoveSkill = (skillToRemove: string) => {
-        setSkills(skills.filter(skill => skill !== skillToRemove));
+    const handleRemoveSkill = async (idToRemove: number) => {
+        try {
+            await SkillService.delete(idToRemove);
+            setSkills(skills.filter(skill => skill.id !== idToRemove));
+        } catch (err: any) {
+            alert(`Erro ao deletar skill: ${err.message}`);
+        }
     };
 
 
@@ -197,9 +226,9 @@ export default function Configurations() {
                     <div className="bg-slate-900 border border-slate-600 rounded-md p-4 flex flex-wrap gap-2 min-h-[150px] content-start">
                         {skills.map(skill => (
                             <SkillTag
-                                key={skill}
-                                label={skill}
-                                onRemove={() => handleRemoveSkill(skill)}
+                                key={skill.id}
+                                label={skill.name}
+                                onRemove={() => handleRemoveSkill(skill.id)}
                             />
                         ))}
                         {skills.length === 0 && <p className="text-slate-500 text-sm w-full text-center mt-4">Nenhuma competência cadastrada.</p>}
