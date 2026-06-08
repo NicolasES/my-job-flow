@@ -3,7 +3,7 @@ import { DomainError } from "../errors/DomainError";
 export type JobContactProps = {
     id?: number;
     name: string;
-    role: string;
+    role?: string | null;
     linkedin?: string | null;
     phone?: string | null;
     jobId: number;
@@ -12,7 +12,7 @@ export type JobContactProps = {
 export class JobContact {
     private id?: number;
     private name!: string;
-    private role!: string;
+    private role!: string | null;
     private linkedin: string | null;
     private phone: string | null;
     private jobId: number;
@@ -22,7 +22,7 @@ export class JobContact {
         this.linkedin = props.linkedin ?? null;
         this.phone = props.phone ?? null;
         this.jobId = props.jobId;
-        
+
         this.setName(props.name);
         this.setRole(props.role);
     }
@@ -47,16 +47,17 @@ export class JobContact {
         this.name = trimmed;
     }
 
-    public getRole(): string {
+    public getRole(): string | null {
         return this.role;
     }
 
-    public setRole(role: string): void {
-        const trimmed = role.trim();
-        if (!trimmed) {
-            throw new DomainError('Contact role cannot be empty');
+    public setRole(role?: string | null): void {
+        if (role === null || role === undefined) {
+            this.role = null;
+            return;
         }
-        this.role = trimmed;
+        const trimmed = role.trim();
+        this.role = trimmed || null;
     }
 
     public getLinkedin(): string | null {

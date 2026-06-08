@@ -1,19 +1,22 @@
 import { useState, useRef, useEffect } from 'react'
-
-const MOCK_DB_SKILLS = [
-    "React", "Node.js", "TypeScript", "JavaScript",
-    "Python", "Docker", "Figma", "Tailwind CSS", "AWS", "SQL"
-];
+import type { Skill } from '../../services/SkillService'
 
 interface SkillAutocompleteProps {
-    onAddSkill: (skill: string) => void;
-    // Optional: to hide skills we already picked from the dropdown
-    alreadySelected?: string[];
+    availableSkills: Skill[];
+    alreadySelected?: Skill[];
+    onAddSkill: (skill: Skill) => void;
+    onCreateSkill: (name: string) => Promise<Skill>;
 }
 
-export function SkillAutocomplete({ onAddSkill, alreadySelected = [] }: SkillAutocompleteProps) {
+export function SkillAutocomplete({
+    availableSkills,
+    alreadySelected = [],
+    onAddSkill,
+    onCreateSkill
+}: SkillAutocompleteProps) {
     const [inputValue, setInputValue] = useState("");
     const [isOpen, setIsOpen] = useState(false);
+    const [isCreating, setIsCreating] = useState(false);
 
     const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -27,21 +30,35 @@ export function SkillAutocomplete({ onAddSkill, alreadySelected = [] }: SkillAut
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const filteredSkills = MOCK_DB_SKILLS.filter(skill =>
-        skill.toLowerCase().includes(inputValue.toLowerCase()) &&
-        !alreadySelected.includes(skill)
+    const filteredSkills = availableSkills.filter(skill =>
+        skill.name.toLowerCase().includes(inputValue.toLowerCase()) &&
+        !alreadySelected.some(s => s.id === skill.id)
     );
 
-    const exactMatchExists = MOCK_DB_SKILLS.some(
-        skill => skill.toLowerCase() === inputValue.trim().toLowerCase()
+    const exactMatchExists = availableSkills.some(
+        skill => skill.name.toLowerCase() === inputValue.trim().toLowerCase()
     );
 
     const showCreateOption = inputValue.trim().length > 0 && !exactMatchExists;
 
-    const handleSelect = (skill: string) => {
+    const handleSelect = (skill: Skill) => {
         onAddSkill(skill);
         setInputValue("");
         setIsOpen(false);
+    };
+
+    const handleCreate = async () => {
+        if (!inputValue.trim() || isCreating) return;
+
+        setIsCreating(true);
+        try {
+            const newSkill = await onCreateSkill(inputValue.trim());
+            handleSelect(newSkill);
+        } catch (err) {
+            console.error("Error creating skill", err);
+        } finally {
+            setIsCreating(false);
+        }
     };
 
     return (
@@ -56,6 +73,7 @@ export function SkillAutocomplete({ onAddSkill, alreadySelected = [] }: SkillAut
                 onFocus={() => setIsOpen(true)}
                 className="w-full bg-slate-900 border border-slate-600 rounded-md px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 placeholder="Digite uma skill"
+                disabled={isCreating}
             />
 
             {isOpen && (inputValue.length > 0 || filteredSkills.length > 0) && (
@@ -63,21 +81,21 @@ export function SkillAutocomplete({ onAddSkill, alreadySelected = [] }: SkillAut
                     <ul className="py-1 text-sm text-slate-300">
                         {filteredSkills.map(skill => (
                             <li
-                                key={skill}
+                                key={skill.id}
                                 onClick={() => handleSelect(skill)}
                                 className="px-3 py-2 hover:bg-slate-700 hover:text-white cursor-pointer transition-colors flex items-center justify-between"
                             >
-                                {skill}
+                                {skill.name}
                                 <span className="text-xs text-slate-500">Existing</span>
                             </li>
                         ))}
 
                         {showCreateOption && (
                             <li
-                                onClick={() => handleSelect(inputValue.trim())}
-                                className="px-3 py-2 hover:bg-slate-700 cursor-pointer border-t border-slate-700 text-blue-400 transition-colors"
+                                onClick={handleCreate}
+                                className={`px-3 py-2 border-t border-slate-700 transition-colors ${isCreating ? 'text-slate-500 cursor-not-allowed' : 'text-blue-400 hover:bg-slate-700 cursor-pointer'}`}
                             >
-                                Create <span className="font-semibold text-white">"{inputValue.trim()}"</span> +
+                                {isCreating ? 'Creating...' : <>Create <span className="font-semibold text-white">"{inputValue.trim()}"</span> +</>}
                             </li>
                         )}
 

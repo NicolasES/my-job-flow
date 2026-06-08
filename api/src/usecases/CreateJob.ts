@@ -14,7 +14,7 @@ export type CreateJobInput = {
     description: string;
     appliedAt: Date;
 
-    contacts?: { name: string; role: string; linkedin?: string | null; phone?: string | null; }[];
+    contacts?: { name: string; role?: string | null; linkedin?: string | null; phone?: string | null; }[];
     links?: { title: string; url: string; }[];
     mandatorySkillsIds?: number[];
     recommendedSkillsIds?: number[];

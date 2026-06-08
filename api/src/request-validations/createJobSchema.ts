@@ -13,7 +13,7 @@ export const createJobSchema = {
 
             contacts: z.array(z.object({
                 name: z.string().min(1, "Contact name is required"),
-                role: z.string().min(1, "Contact role is required"),
+                role: z.string().nullable().optional(),
                 linkedin: z.string().nullable().optional(),
                 phone: z.string().nullable().optional()
             })).optional(),
@@ -36,7 +36,7 @@ export type CreateJobRequest = FastifyRequest<{
         description: string;
         appliedAt: Date;
 
-        contacts?: { name: string; role: string; linkedin?: string | null; phone?: string | null; }[];
+        contacts?: { name: string; role?: string | null; linkedin?: string | null; phone?: string | null; }[];
         links?: { title: string; url: string; }[];
         mandatorySkillsIds?: number[];
         recommendedSkillsIds?: number[];

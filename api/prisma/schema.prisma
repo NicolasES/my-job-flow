@@ -71,7 +71,7 @@ model JobComment {
 model JobContact {
   id       Int     @id @default(autoincrement())
   name     String
-  role     String
+  role     String?
   linkedin String?
   phone    String?
 
