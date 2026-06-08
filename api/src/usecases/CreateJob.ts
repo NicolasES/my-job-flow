@@ -5,7 +5,6 @@ import { DomainError } from "@/errors/DomainError";
 import type { JobStatusRepositoryInterface } from "@/repositories/interfaces/JobStatusRepositoryInterface";
 import type { SkillRepositoryInterface } from "@/repositories/interfaces/SkillRepositoryInterface";
 import type { UnitOfWork } from "@/repositories/interfaces/UnitOfWork";
-import { Skill } from "@/entities/Skill";
 
 export type CreateJobInput = {
     title: string;

@@ -14,8 +14,9 @@ import { createSkillSchema } from "@/request-validations/createSkillSchema";
 import { deleteSkillSchema } from "@/request-validations/deleteSkillSchema";
 
 // Jobs
-import { JobController } from "@/controllers/JobController";
-import { createJobSchema } from "@/request-validations/createJobSchema";
+import { JobController } from '@/controllers/JobController';
+import { createJobSchema } from '@/request-validations/createJobSchema';
+import { getJobDetailsSchema } from '@/request-validations/getJobDetailsSchema';
 
 export default function registerRoutes({ fastify }: Application) {
     // === JOB STATUS ROUTES ===
@@ -37,4 +38,5 @@ export default function registerRoutes({ fastify }: Application) {
     // === JOBS ROUTES ===
     const jobController = container.resolve<JobController>('JobController');
     fastify.post('/jobs', createJobSchema, (req, rep) => jobController.create(req as any, rep));
+    fastify.get('/jobs/:id', getJobDetailsSchema, (req, rep) => jobController.getDetails(req as any, rep));
 }

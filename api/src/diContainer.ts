@@ -18,14 +18,16 @@ import { SkillController } from '@/controllers/SkillController';
 
 import { JobPrismaRepository } from '@/repositories/JobPrismaRepository';
 import { CreateJob } from '@/usecases/CreateJob';
+import { GetJobDetails } from '@/usecases/GetJobDetails';
 import { JobController } from '@/controllers/JobController';
 
 import { PrismaUnitOfWork } from "@/repositories/PrismaUnitOfWork";
+import { JobDetailsPrismaDao } from '@/daos/JobDetailsPrismaDao';
 
 // 1. Prisma Client Singleton
 container.registerInstance('PrismaClient', prisma);
 
-// 2. Repositories
+// 2. Repositories & DAOs
 container.register('SkillRepositoryInterface', {
     useValue: new SkillPrismaRepository(prisma)
 });
@@ -37,6 +39,9 @@ container.register('JobRepositoryInterface', {
 });
 container.register('UnitOfWork', {
     useValue: new PrismaUnitOfWork(prisma)
+});
+container.register('JobDetailsDaoInterface', {
+    useValue: new JobDetailsPrismaDao(prisma)
 });
 
 // 3. Use Cases
@@ -74,6 +79,10 @@ container.register('CreateJob', {
     )
 });
 
+container.register('GetJobDetails', {
+    useFactory: (c) => new GetJobDetails(c.resolve('JobDetailsDaoInterface'))
+});
+
 // 4. Controllers
 container.register('JobStatusController', {
     useFactory: (c) => new JobStatusController(
@@ -87,7 +96,8 @@ container.register('JobStatusController', {
 
 container.register('JobController', {
     useFactory: (c) => new JobController(
-        c.resolve('CreateJob')
+        c.resolve('CreateJob'),
+        c.resolve('GetJobDetails')
     )
 });
 
