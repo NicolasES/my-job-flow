@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { TextAreaInput } from "../components/form/TextAreaInput";
-import { TextInput } from "../components/form/TextInput";
+import { DynamicContactList } from "../components/form/DynamicContactList";
+import type { ContactItem } from "../components/form/DynamicContactList";
+import { DynamicLinkList } from "../components/form/DynamicLinkList";
+import type { LinkItem } from "../components/form/DynamicLinkList";
 
 export default function JobDetails() {
     // Mock Data
@@ -38,39 +41,13 @@ export default function JobDetails() {
         setEditingCommentId(null);
     };
 
-    const [contacts, setContacts] = useState([
+    const [contacts, setContacts] = useState<ContactItem[]>([
         { id: 1, name: "Ana Souza", role: "Tech Recruiter", linkedin: "linkedin.com/in/ana", phone: "11999999999" }
     ]);
-    const [isAddingContact, setIsAddingContact] = useState(false);
-    const [newContact, setNewContact] = useState({ name: '', role: '', linkedin: '', phone: '' });
 
-    const handleAddContact = () => {
-        if (!newContact.name.trim()) return;
-        setContacts([...contacts, { id: Date.now(), ...newContact }]);
-        setNewContact({ name: '', role: '', linkedin: '', phone: '' });
-        setIsAddingContact(false);
-    };
-
-    const handleRemoveContact = (id: number) => {
-        setContacts(contacts.filter(c => c.id !== id));
-    };
-
-    const [links, setLinks] = useState([
+    const [links, setLinks] = useState<LinkItem[]>([
         { id: 1, title: "Desafio Técnico", url: "github.com/empresa/desafio-front" }
     ]);
-    const [isAddingLink, setIsAddingLink] = useState(false);
-    const [newLink, setNewLink] = useState({ title: '', url: '' });
-
-    const handleAddLink = () => {
-        if (!newLink.title.trim() || !newLink.url.trim()) return;
-        setLinks([...links, { id: Date.now(), ...newLink }]);
-        setNewLink({ title: '', url: '' });
-        setIsAddingLink(false);
-    };
-
-    const handleRemoveLink = (id: number) => {
-        setLinks(links.filter(l => l.id !== id));
-    };
 
     return (
         <div className="flex flex-col h-full p-8 overflow-y-auto custom-scrollbar">
@@ -156,73 +133,8 @@ export default function JobDetails() {
                 </div>
 
                 <div className="flex flex-col gap-6">
-                    <section className="bg-slate-800 p-6 rounded-lg border border-slate-700">
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-lg font-medium text-white">Contatos</h2>
-                            <button onClick={() => setIsAddingContact(!isAddingContact)} className="text-blue-400 hover:text-blue-300 text-sm font-medium">
-                                {isAddingContact ? "Cancelar" : "+ Adicionar"}
-                            </button>
-                        </div>
-
-                        {isAddingContact && (
-                            <div className="bg-slate-900 border border-slate-600 p-3 rounded-md mb-4 flex flex-col gap-2">
-                                <TextInput id="c-name" label="Nome" placeholder="Nome" value={newContact.name} onChange={e => setNewContact({ ...newContact, name: e.target.value })} />
-                                <TextInput id="c-role" label="Cargo" placeholder="Ex: Tech Recruiter" value={newContact.role} onChange={e => setNewContact({ ...newContact, role: e.target.value })} />
-                                <TextInput id="c-linkedin" label="LinkedIn" placeholder="URL" value={newContact.linkedin} onChange={e => setNewContact({...newContact, linkedin: e.target.value})} />
-                                <TextInput id="c-phone" label="Telefone" placeholder="Número" value={newContact.phone} onChange={e => setNewContact({...newContact, phone: e.target.value})} />
-                                <button onClick={handleAddContact} className="mt-2 px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">Salvar Contato</button>
-                            </div>
-                        )}
-
-                        <div className="flex flex-col gap-3">
-                            {contacts.map(contact => (
-                                <div key={contact.id} className="bg-slate-900 border border-slate-600 p-3 rounded-md flex flex-col gap-1 relative group">
-                                    <button onClick={() => handleRemoveContact(contact.id)} className="absolute top-2 right-2 text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">&times;</button>
-                                    <span className="text-sm font-medium text-white">{contact.name}</span>
-                                    <span className="text-xs text-slate-400">{contact.role}</span>
-                                    <div className="flex gap-2 mt-2">
-                                        {contact.linkedin && <a href={`https://${contact.linkedin.replace('https://', '')}`} target="_blank" rel="noreferrer" className="text-xs text-blue-400 hover:underline">LinkedIn</a>}
-                                        {contact.linkedin && contact.phone && <span className="text-slate-600">|</span>}
-                                        {contact.phone && <a href="#" className="text-xs text-blue-400 hover:underline">{contact.phone}</a>}
-                                    </div>
-                                </div>
-                            ))}
-                            {contacts.length === 0 && <p className="text-sm text-slate-500">Nenhum contato.</p>}
-                        </div>
-                    </section>
-
-                    <section className="bg-slate-800 p-6 rounded-lg border border-slate-700">
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-lg font-medium text-white">Links Úteis</h2>
-                            <button onClick={() => setIsAddingLink(!isAddingLink)} className="text-blue-400 hover:text-blue-300 text-sm font-medium">
-                                {isAddingLink ? "Cancelar" : "+ Adicionar"}
-                            </button>
-                        </div>
-
-                        {isAddingLink && (
-                            <div className="bg-slate-900 border border-slate-600 p-3 rounded-md mb-4 flex flex-col gap-2">
-                                <TextInput id="l-title" label="Título" placeholder="Ex: Desafio Técnico" value={newLink.title} onChange={e => setNewLink({ ...newLink, title: e.target.value })} />
-                                <TextInput id="l-url" label="URL" placeholder="https://..." value={newLink.url} onChange={e => setNewLink({ ...newLink, url: e.target.value })} />
-                                <button onClick={handleAddLink} className="mt-2 px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">Salvar Link</button>
-                            </div>
-                        )}
-
-                        <div className="flex flex-col gap-3">
-                            {links.map(link => (
-                                <div key={link.id} className="bg-slate-900 border border-slate-600 p-3 rounded-md flex justify-between items-center group relative">
-                                    <div className="flex flex-col max-w-[80%]">
-                                        <span className="text-sm font-medium text-white truncate">{link.title}</span>
-                                        <span className="text-xs text-slate-400 truncate">{link.url}</span>
-                                    </div>
-                                    <div className="flex gap-2 items-center">
-                                        <a href={`https://${link.url.replace('https://', '')}`} target="_blank" rel="noreferrer" className="text-slate-500 hover:text-blue-400" title="Abrir link">↗</a>
-                                        <button onClick={() => handleRemoveLink(link.id)} className="text-slate-500 hover:text-red-400 leading-none" title="Excluir">&times;</button>
-                                    </div>
-                                </div>
-                            ))}
-                            {links.length === 0 && <p className="text-sm text-slate-500">Nenhum link.</p>}
-                        </div>
-                    </section>
+                    <DynamicContactList contacts={contacts} onChange={setContacts} />
+                    <DynamicLinkList links={links} onChange={setLinks} />
 
                 </div>
             </div>
