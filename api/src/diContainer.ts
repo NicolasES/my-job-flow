@@ -16,15 +16,27 @@ import { FindAllSkills } from '@/usecases/FindAllSkills';
 import { DeleteSkill } from '@/usecases/DeleteSkill';
 import { SkillController } from '@/controllers/SkillController';
 
+import { JobPrismaRepository } from '@/repositories/JobPrismaRepository';
+import { CreateJob } from '@/usecases/CreateJob';
+import { JobController } from '@/controllers/JobController';
+
+import { PrismaUnitOfWork } from "@/repositories/PrismaUnitOfWork";
+
 // 1. Prisma Client Singleton
 container.registerInstance('PrismaClient', prisma);
 
 // 2. Repositories
+container.register('SkillRepositoryInterface', {
+    useValue: new SkillPrismaRepository(prisma)
+});
 container.register('JobStatusRepositoryInterface', {
     useValue: new JobStatusPrismaRepository(prisma)
 });
-container.register('SkillRepositoryInterface', {
-    useValue: new SkillPrismaRepository(prisma)
+container.register('JobRepositoryInterface', {
+    useValue: new JobPrismaRepository(prisma)
+});
+container.register('UnitOfWork', {
+    useValue: new PrismaUnitOfWork(prisma)
 });
 
 // 3. Use Cases
@@ -34,11 +46,11 @@ container.register('CreateJobStatus', {
 container.register('FindAllJobStatus', {
     useFactory: (c) => new FindAllJobStatus(c.resolve('JobStatusRepositoryInterface'))
 });
-container.register('ReorderJobStatus', {
-    useFactory: (c) => new ReorderJobStatus(c.resolve('JobStatusRepositoryInterface'))
-});
 container.register('UpdateJobStatus', {
     useFactory: (c) => new UpdateJobStatus(c.resolve('JobStatusRepositoryInterface'))
+});
+container.register('ReorderJobStatus', {
+    useFactory: (c) => new ReorderJobStatus(c.resolve('JobStatusRepositoryInterface'))
 });
 container.register('DeleteJobStatus', {
     useFactory: (c) => new DeleteJobStatus(c.resolve('JobStatusRepositoryInterface'))
@@ -54,16 +66,31 @@ container.register('DeleteSkill', {
     useFactory: (c) => new DeleteSkill(c.resolve('SkillRepositoryInterface'))
 });
 
+container.register('CreateJob', {
+    useFactory: (c) => new CreateJob(
+        c.resolve('UnitOfWork'),
+        c.resolve('JobStatusRepositoryInterface'),
+        c.resolve('SkillRepositoryInterface')
+    )
+});
+
 // 4. Controllers
 container.register('JobStatusController', {
     useFactory: (c) => new JobStatusController(
         c.resolve('CreateJobStatus'),
         c.resolve('FindAllJobStatus'),
-        c.resolve('ReorderJobStatus'),
         c.resolve('UpdateJobStatus'),
+        c.resolve('ReorderJobStatus'),
         c.resolve('DeleteJobStatus')
     )
 });
+
+container.register('JobController', {
+    useFactory: (c) => new JobController(
+        c.resolve('CreateJob')
+    )
+});
+
 container.register('SkillController', {
     useFactory: (c) => new SkillController(
         c.resolve('CreateSkill'),

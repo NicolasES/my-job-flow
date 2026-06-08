@@ -57,12 +57,26 @@ export class JobStatusPrismaRepository implements JobStatusRepositoryInterface {
         });
     }
 
+    async findInitialStatus(): Promise<JobStatus | null> {
+        const status = await this.prismaClient.jobStatus.findFirst({
+            orderBy: { order: 'asc' }
+        });
+
+        if (!status) return null;
+
+        return new JobStatus({
+            id: status.id,
+            name: status.name,
+            order: status.order
+        });
+    }
+
     async update(jobStatus: JobStatus): Promise<JobStatus> {
         const updated = await this.prismaClient.jobStatus.update({
             where: { id: jobStatus.getId()! },
-            data: { 
+            data: {
                 name: jobStatus.getName(),
-                order: jobStatus.getOrder() 
+                order: jobStatus.getOrder()
             }
         });
 
