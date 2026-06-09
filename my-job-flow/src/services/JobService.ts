@@ -59,6 +59,16 @@ export interface JobDetailsOutput {
     }[];
 }
 
+export const WORK_MODEL_OPTIONS = [
+    { value: 'remote', label: 'Remoto' },
+    { value: 'hybrid', label: 'Híbrido' },
+    { value: 'onsite', label: 'Presencial' },
+];
+
+export const getWorkModelLabel = (value: string) => {
+    return WORK_MODEL_OPTIONS.find(opt => opt.value === value)?.label || value;
+};
+
 export class JobService {
     static async create(data: CreateJobInput): Promise<JobOutput> {
         return fetchApi<JobOutput>('/jobs', {

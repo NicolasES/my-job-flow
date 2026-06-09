@@ -16,7 +16,7 @@ export class JobLink {
     constructor(props: JobLinkProps) {
         this.id = props.id;
         this.jobId = props.jobId;
-        
+
         this.setTitle(props.title);
         this.setUrl(props.url);
     }
@@ -50,7 +50,6 @@ export class JobLink {
         if (!trimmed) {
             throw new DomainError('Link url cannot be empty');
         }
-        // Very basic validation just for domain level logic
         if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
             throw new DomainError('Link url must start with http:// or https://');
         }

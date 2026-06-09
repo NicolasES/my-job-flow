@@ -11,15 +11,9 @@ import type { ContactItem } from "../components/form/DynamicContactList"
 import { DynamicLinkList } from "../components/form/DynamicLinkList"
 import type { LinkItem } from "../components/form/DynamicLinkList"
 
+import { JobService, WORK_MODEL_OPTIONS } from "../services/JobService";
 import { SkillService } from '../services/SkillService'
 import type { Skill } from '../services/SkillService'
-import { JobService } from '../services/JobService'
-
-const workModelOptions = [
-    { value: 'remote', label: 'Remoto' },
-    { value: 'hybrid', label: 'Híbrido' },
-    { value: 'onsite', label: 'Presencial' },
-]
 
 export default function NewJob() {
     const [availableSkills, setAvailableSkills] = useState<Skill[]>([])
@@ -220,7 +214,7 @@ export default function NewJob() {
                                 id="workModel"
                                 name="workModel"
                                 required
-                                options={workModelOptions}
+                                options={WORK_MODEL_OPTIONS}
                             />
                         </div>
                     </section>
