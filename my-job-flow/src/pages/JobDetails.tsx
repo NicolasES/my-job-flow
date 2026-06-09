@@ -1,30 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { TextAreaInput } from "../components/form/TextAreaInput";
 import { DynamicContactList } from "../components/form/DynamicContactList";
 import type { ContactItem } from "../components/form/DynamicContactList";
 import { DynamicLinkList } from "../components/form/DynamicLinkList";
 import type { LinkItem } from "../components/form/DynamicLinkList";
+import { JobService } from "../services/JobService";
+import type { JobDetailsOutput } from "../services/JobService";
 
 export default function JobDetails() {
-    // Mock Data
-    const job = {
-        title: "React Developer",
-        company: "Globant",
-        workModel: "Híbrido",
-        salary: "15.000",
-        appliedAt: "2023-10-15",
-        status: "Entrevista Inicial",
-        description: "Vaga para atuar no squad de pagamentos.\nRequisitos:\n- 4+ anos com React\n- Conhecimento em TypeScript e testes automatizados (Jest)\n- Boa comunicação e perfil analítico."
-    };
+    const { id } = useParams<{ id: string }>();
 
-    // Mock
-    const [comments, setComments] = useState([
-        { id: 1, text: "Fiz a entrevista inicial com o RH. Foi bem tranquilo, perguntaram sobre minha experiência com React.", date: "16 Out 2023, 14:30" },
-        { id: 2, text: "Enviei o meu currículo pelo site da Gupy.", date: "15 Out 2023, 10:00" }
-    ]);
+    const [job, setJob] = useState<JobDetailsOutput | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+
+    const [comments, setComments] = useState<any[]>([]);
     const [newComment, setNewComment] = useState("");
     const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
     const [editingCommentText, setEditingCommentText] = useState("");
+
+    const [contacts, setContacts] = useState<ContactItem[]>([]);
+    const [links, setLinks] = useState<LinkItem[]>([]);
+
+    useEffect(() => {
+        if (!id) return;
+        setLoading(true);
+        JobService.getDetails(Number(id))
+            .then(data => {
+                setJob(data);
+                // Map API data to local states for editing/viewing
+                setComments(data.comments);
+                setContacts(data.contacts.map(c => ({
+                    id: c.id,
+                    name: c.name,
+                    role: c.role || "",
+                    linkedin: c.linkedin || "",
+                    phone: c.phone || ""
+                })));
+                setLinks(data.links);
+            })
+            .catch(err => setError(err.message))
+            .finally(() => setLoading(false));
+    }, [id]);
 
     const handleAddComment = () => {
         if (!newComment.trim()) return;
@@ -32,8 +50,8 @@ export default function JobDetails() {
         setNewComment("");
     };
 
-    const handleRemoveComment = (id: number) => {
-        setComments(comments.filter(c => c.id !== id));
+    const handleRemoveComment = (commentId: number) => {
+        setComments(comments.filter(c => c.id !== commentId));
     };
 
     const handleSaveEditComment = () => {
@@ -41,13 +59,13 @@ export default function JobDetails() {
         setEditingCommentId(null);
     };
 
-    const [contacts, setContacts] = useState<ContactItem[]>([
-        { id: 1, name: "Ana Souza", role: "Tech Recruiter", linkedin: "linkedin.com/in/ana", phone: "11999999999" }
-    ]);
+    if (loading) {
+        return <div className="flex items-center justify-center h-full text-slate-300">Carregando detalhes da vaga...</div>;
+    }
 
-    const [links, setLinks] = useState<LinkItem[]>([
-        { id: 1, title: "Desafio Técnico", url: "github.com/empresa/desafio-front" }
-    ]);
+    if (error || !job) {
+        return <div className="flex items-center justify-center h-full text-red-400">Erro: {error || "Vaga não encontrada"}</div>;
+    }
 
     return (
         <div className="flex flex-col h-full p-8 overflow-y-auto custom-scrollbar">
@@ -58,7 +76,7 @@ export default function JobDetails() {
                     <p className="text-slate-400 mt-1">{job.company} • {job.workModel}</p>
                 </div>
                 <div className="bg-blue-600/20 text-blue-400 border border-blue-600/50 px-4 py-1.5 rounded-full text-sm font-medium">
-                    {job.status}
+                    {job.status.name}
                 </div>
             </div>
 
@@ -124,7 +142,7 @@ export default function JobDetails() {
                                             {comment.text}
                                         </p>
                                     )}
-                                    <span className="text-xs text-slate-500">{comment.date}</span>
+                                    <span className="text-xs text-slate-500">{new Date(comment.date).toLocaleString('pt-BR')}</span>
                                 </div>
                             ))}
                             {comments.length === 0 && <p className="text-sm text-slate-500">Nenhum comentário ainda.</p>}

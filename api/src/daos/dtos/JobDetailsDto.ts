@@ -15,7 +15,7 @@ export type JobDetailsDto = {
     contacts: {
         id: number;
         name: string;
-        role: string;
+        role: string | null;
         linkedin: string | null;
         phone: string | null;
     }[];
