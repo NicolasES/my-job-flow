@@ -15,7 +15,8 @@ describe('JobContact Entity', () => {
         expect(() => new JobContact({ name: '', role: 'Recruiter', jobId: 1 })).toThrow('Contact name cannot be empty');
     });
 
-    it('should throw an error if the role is empty', () => {
-        expect(() => new JobContact({ name: 'Ana Souza', role: '   ', jobId: 1 })).toThrow('Contact role cannot be empty');
+    it('should allow an empty role', () => {
+        const contact = new JobContact({ name: 'Ana Souza', role: '   ', jobId: 1 });
+        expect(contact.getRole()).toBe(null);
     });
 });

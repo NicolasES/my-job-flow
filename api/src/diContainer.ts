@@ -88,8 +88,8 @@ container.register('JobStatusController', {
     useFactory: (c) => new JobStatusController(
         c.resolve('CreateJobStatus'),
         c.resolve('FindAllJobStatus'),
-        c.resolve('UpdateJobStatus'),
         c.resolve('ReorderJobStatus'),
+        c.resolve('UpdateJobStatus'),
         c.resolve('DeleteJobStatus')
     )
 });
