@@ -33,9 +33,25 @@ export function useJobDetails(id: string | undefined) {
             .finally(() => setLoading(false));
     }, [id]);
 
-    const updateJob = (updater: (prev: JobDetailsOutput) => JobDetailsOutput) => {
+    const updateJob = async (updater: (prev: JobDetailsOutput) => JobDetailsOutput) => {
         if (!job) return;
-        setJob(updater(job));
+        const updatedJob = updater(job);
+        
+        try {
+            await JobService.update(updatedJob.id, {
+                title: updatedJob.title,
+                company: updatedJob.company,
+                workModel: updatedJob.workModel,
+                statusId: updatedJob.status.id,
+                description: updatedJob.description,
+                appliedAt: updatedJob.appliedAt,
+                salary: updatedJob.salary
+            });
+            setJob(updatedJob);
+        } catch (err: any) {
+            console.error("Failed to update job", err);
+            setError(err.message || "Falha ao atualizar a vaga");
+        }
     };
 
     const addComment = (text: string) => {

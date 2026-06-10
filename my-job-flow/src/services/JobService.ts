@@ -80,4 +80,19 @@ export class JobService {
     static async getDetails(id: number): Promise<JobDetailsOutput> {
         return fetchApi<JobDetailsOutput>(`/jobs/${id}`);
     }
+
+    static async update(id: number, data: {
+        title: string;
+        company: string;
+        workModel: string;
+        statusId: number;
+        description: string;
+        appliedAt: string;
+        salary?: number | null;
+    }): Promise<void> {
+        await fetchApi(`/jobs/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(data)
+        });
+    }
 }

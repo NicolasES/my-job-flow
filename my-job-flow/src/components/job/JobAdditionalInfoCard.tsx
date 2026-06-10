@@ -23,7 +23,7 @@ export function JobAdditionalInfoCard({ job, onUpdateJob }: JobAdditionalInfoCar
             company: job.company,
             workModel: job.workModel,
             salary: job.salary ? job.salary.toString() : "",
-            appliedAt: new Date(job.appliedAt).toISOString().split('T')[0]
+            appliedAt: job.appliedAt ? job.appliedAt.split('T')[0] : ""
         }); 
         setIsEditingInfo(true); 
     };
@@ -34,7 +34,7 @@ export function JobAdditionalInfoCard({ job, onUpdateJob }: JobAdditionalInfoCar
             company: editInfo.company,
             workModel: editInfo.workModel,
             salary: editInfo.salary ? parseFloat(editInfo.salary) : null,
-            appliedAt: editInfo.appliedAt ? new Date(editInfo.appliedAt).toISOString() : prev.appliedAt
+            appliedAt: editInfo.appliedAt ? new Date(`${editInfo.appliedAt}T00:00:00Z`).toISOString() : prev.appliedAt
         }));
         setIsEditingInfo(false);
     };
@@ -104,7 +104,7 @@ export function JobAdditionalInfoCard({ job, onUpdateJob }: JobAdditionalInfoCar
                     </li>
                     <li className="flex flex-col">
                         <span className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Data de Candidatura</span>
-                        <span>{new Date(job.appliedAt).toLocaleDateString('pt-BR')}</span>
+                        <span>{job.appliedAt ? job.appliedAt.split('T')[0].split('-').reverse().join('/') : 'Não informado'}</span>
                     </li>
                     <li className="flex flex-col">
                         <span className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Registrado no sistema em</span>
