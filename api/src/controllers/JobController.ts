@@ -3,11 +3,14 @@ import type { CreateJob } from "@/usecases/CreateJob";
 import type { GetJobDetails } from "@/usecases/GetJobDetails";
 import type { CreateJobRequest } from "@/request-validations/createJobSchema";
 import type { GetJobDetailsRequest } from "@/request-validations/getJobDetailsSchema";
+import type { UpdateJob } from "@/usecases/UpdateJob";
+import type { UpdateJobRequest } from "@/request-validations/updateJobSchema";
 
 export class JobController {
     constructor(
         private readonly createJobUseCase: CreateJob,
-        private readonly getJobDetailsUseCase: GetJobDetails
+        private readonly getJobDetailsUseCase: GetJobDetails,
+        private readonly updateJobUseCase: UpdateJob
     ) { }
 
     async create(request: CreateJobRequest, reply: FastifyReply) {
@@ -20,5 +23,12 @@ export class JobController {
         const { id } = request.params;
         const output = await this.getJobDetailsUseCase.execute(id);
         return reply.status(200).send(output);
+    }
+
+    async update(request: UpdateJobRequest, reply: FastifyReply) {
+        const { id } = request.params;
+        const data = request.body;
+        await this.updateJobUseCase.execute(id, data);
+        return reply.status(200).send({ success: true });
     }
 }

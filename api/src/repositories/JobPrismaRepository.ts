@@ -42,6 +42,65 @@ export class JobPrismaRepository implements JobRepositoryInterface {
         });
     }
 
+    async findById(id: number): Promise<Job | null> {
+        const found = await this.prismaClient.job.findUnique({
+            where: { id },
+            include: { status: true }
+        });
+
+        if (!found) return null;
+
+        return new Job({
+            id: found.id,
+            title: found.title,
+            company: found.company,
+            workModel: found.workModel as any,
+            salary: found.salary,
+            description: found.description,
+            appliedAt: found.appliedAt,
+            createdAt: found.createdAt,
+            status: new JobStatus({
+                id: found.status.id,
+                name: found.status.name,
+                order: found.status.order
+            })
+        });
+    }
+
+    async update(job: Job): Promise<Job> {
+        const updated = await this.prismaClient.job.update({
+            where: { id: job.getId() },
+            data: {
+                title: job.getTitle(),
+                company: job.getCompany(),
+                workModel: job.getWorkModel(),
+                salary: job.getSalary(),
+                description: job.getDescription(),
+                appliedAt: job.getAppliedAt(),
+                statusId: job.getStatus().getId()!,
+            },
+            include: {
+                status: true
+            }
+        });
+
+        return new Job({
+            id: updated.id,
+            title: updated.title,
+            company: updated.company,
+            workModel: updated.workModel as any,
+            salary: updated.salary,
+            description: updated.description,
+            appliedAt: updated.appliedAt,
+            createdAt: updated.createdAt,
+            status: new JobStatus({
+                id: updated.status.id,
+                name: updated.status.name,
+                order: updated.status.order
+            })
+        });
+    }
+
     async associateSkills(jobId: number, mandatorySkillsIds: number[], recommendedSkillsIds: number[]): Promise<void> {
         if (mandatorySkillsIds.length === 0 && recommendedSkillsIds.length === 0) return;
 

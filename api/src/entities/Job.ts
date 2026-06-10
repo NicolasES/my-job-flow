@@ -76,12 +76,24 @@ export class Job {
     public getSalary(): number | null {
         return this.salary;
     }
+    public setSalary(salary: number | null): void {
+        this.salary = salary;
+    }
+
     public getDescription(): string {
         return this.description;
     }
+    public setDescription(description: string): void {
+        this.description = description.trim();
+    }
+
     public getAppliedAt(): Date {
         return this.appliedAt;
     }
+    public setAppliedAt(appliedAt: Date): void {
+        this.appliedAt = appliedAt;
+    }
+
     public getCreatedAt(): Date {
         return this.createdAt;
     }

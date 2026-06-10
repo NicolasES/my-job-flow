@@ -19,7 +19,7 @@ export const createJobSchema = {
             })).optional(),
             links: z.array(z.object({
                 title: z.string().min(1, "Link title is required"),
-                url: z.string().url("Link must be a valid URL")
+                url: z.url("Link must be a valid URL")
             })).optional(),
             mandatorySkillsIds: z.array(z.number().int().positive()).optional(),
             recommendedSkillsIds: z.array(z.number().int().positive()).optional()

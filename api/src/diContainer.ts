@@ -19,6 +19,7 @@ import { SkillController } from '@/controllers/SkillController';
 import { JobPrismaRepository } from '@/repositories/JobPrismaRepository';
 import { CreateJob } from '@/usecases/CreateJob';
 import { GetJobDetails } from '@/usecases/GetJobDetails';
+import { UpdateJob } from '@/usecases/UpdateJob';
 import { JobController } from '@/controllers/JobController';
 
 import { PrismaUnitOfWork } from "@/repositories/PrismaUnitOfWork";
@@ -83,6 +84,10 @@ container.register('GetJobDetails', {
     useFactory: (c) => new GetJobDetails(c.resolve('JobDetailsDaoInterface'))
 });
 
+container.register('UpdateJob', {
+    useFactory: (c) => new UpdateJob(c.resolve('JobRepositoryInterface'))
+});
+
 // 4. Controllers
 container.register('JobStatusController', {
     useFactory: (c) => new JobStatusController(
@@ -97,7 +102,8 @@ container.register('JobStatusController', {
 container.register('JobController', {
     useFactory: (c) => new JobController(
         c.resolve('CreateJob'),
-        c.resolve('GetJobDetails')
+        c.resolve('GetJobDetails'),
+        c.resolve('UpdateJob')
     )
 });
 
