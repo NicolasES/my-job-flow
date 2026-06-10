@@ -20,6 +20,9 @@ import { getJobDetailsSchema } from '@/request-validations/getJobDetailsSchema';
 import { updateJobSchema } from '@/request-validations/updateJobSchema';
 import { addJobSkillSchema } from '@/request-validations/addJobSkillSchema';
 import { removeJobSkillSchema } from '@/request-validations/removeJobSkillSchema';
+import { addJobContactSchema } from '@/request-validations/addJobContactSchema';
+import { updateJobContactSchema } from '@/request-validations/updateJobContactSchema';
+import { deleteJobContactSchema } from '@/request-validations/deleteJobContactSchema';
 
 export default function registerRoutes({ fastify }: Application) {
     // === JOB STATUS ROUTES ===
@@ -45,4 +48,8 @@ export default function registerRoutes({ fastify }: Application) {
     fastify.put('/jobs/:id', updateJobSchema, (req, rep) => jobController.update(req as any, rep));
     fastify.post('/jobs/:id/skills/:type', addJobSkillSchema, (req, rep) => jobController.addSkill(req as any, rep));
     fastify.delete('/jobs/:id/skills/:type/:skillId', removeJobSkillSchema, (req, rep) => jobController.removeSkill(req as any, rep));
+
+    fastify.post('/jobs/:id/contacts', addJobContactSchema, (req, rep) => jobController.addContact(req as any, rep));
+    fastify.put('/jobs/:id/contacts/:contactId', updateJobContactSchema, (req, rep) => jobController.updateContact(req as any, rep));
+    fastify.delete('/jobs/:id/contacts/:contactId', deleteJobContactSchema, (req, rep) => jobController.deleteContact(req as any, rep));
 }

@@ -22,6 +22,9 @@ import { GetJobDetails } from '@/usecases/GetJobDetails';
 import { UpdateJob } from '@/usecases/UpdateJob';
 import { AddJobSkill } from '@/usecases/AddJobSkill';
 import { RemoveJobSkill } from '@/usecases/RemoveJobSkill';
+import { AddJobContact } from '@/usecases/AddJobContact';
+import { UpdateJobContact } from '@/usecases/UpdateJobContact';
+import { DeleteJobContact } from '@/usecases/DeleteJobContact';
 import { JobController } from '@/controllers/JobController';
 
 import { PrismaUnitOfWork } from "@/repositories/PrismaUnitOfWork";
@@ -104,6 +107,25 @@ container.register('RemoveJobSkill', {
     )
 });
 
+container.register('AddJobContact', {
+    useFactory: (c) => new AddJobContact(
+        c.resolve('JobRepositoryInterface'),
+        c.resolve('JobContactRepositoryInterface')
+    )
+});
+
+container.register('UpdateJobContact', {
+    useFactory: (c) => new UpdateJobContact(
+        c.resolve('JobContactRepositoryInterface')
+    )
+});
+
+container.register('DeleteJobContact', {
+    useFactory: (c) => new DeleteJobContact(
+        c.resolve('JobContactRepositoryInterface')
+    )
+});
+
 // 4. Controllers
 container.register('JobStatusController', {
     useFactory: (c) => new JobStatusController(
@@ -121,7 +143,10 @@ container.register('JobController', {
         c.resolve('GetJobDetails'),
         c.resolve('UpdateJob'),
         c.resolve('AddJobSkill'),
-        c.resolve('RemoveJobSkill')
+        c.resolve('RemoveJobSkill'),
+        c.resolve('AddJobContact'),
+        c.resolve('UpdateJobContact'),
+        c.resolve('DeleteJobContact')
     )
 });
 

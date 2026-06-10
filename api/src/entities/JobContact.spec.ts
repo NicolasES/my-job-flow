@@ -19,4 +19,32 @@ describe('JobContact Entity', () => {
         const contact = new JobContact({ name: 'Ana Souza', role: '   ', jobId: 1 });
         expect(contact.getRole()).toBe(null);
     });
+
+    it('should set and get linkedin correctly', () => {
+        const contact = new JobContact({ name: 'Ana Souza', jobId: 1 });
+        expect(contact.getLinkedin()).toBeNull();
+        
+        contact.setLinkedin('https://linkedin.com/in/anasouza');
+        expect(contact.getLinkedin()).toBe('https://linkedin.com/in/anasouza');
+
+        contact.setLinkedin('   ');
+        expect(contact.getLinkedin()).toBeNull();
+
+        contact.setLinkedin(null);
+        expect(contact.getLinkedin()).toBeNull();
+    });
+
+    it('should set and get phone correctly', () => {
+        const contact = new JobContact({ name: 'Ana Souza', jobId: 1 });
+        expect(contact.getPhone()).toBeNull();
+        
+        contact.setPhone('+5511999999999');
+        expect(contact.getPhone()).toBe('+5511999999999');
+
+        contact.setPhone('   ');
+        expect(contact.getPhone()).toBeNull();
+
+        contact.setPhone(null);
+        expect(contact.getPhone()).toBeNull();
+    });
 });

@@ -64,7 +64,25 @@ export class JobContact {
         return this.linkedin;
     }
 
+    public setLinkedin(linkedin?: string | null): void {
+        if (linkedin === null || linkedin === undefined) {
+            this.linkedin = null;
+            return;
+        }
+        const trimmed = linkedin.trim();
+        this.linkedin = trimmed || null;
+    }
+
     public getPhone(): string | null {
         return this.phone;
+    }
+
+    public setPhone(phone?: string | null): void {
+        if (phone === null || phone === undefined) {
+            this.phone = null;
+            return;
+        }
+        const trimmed = phone.trim();
+        this.phone = trimmed || null;
     }
 }
