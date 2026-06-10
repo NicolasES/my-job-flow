@@ -116,4 +116,32 @@ export class JobPrismaRepository implements JobRepositoryInterface {
             }
         });
     }
+
+    async addSkill(jobId: number, skillId: number, type: 'mandatory' | 'recommended'): Promise<void> {
+        if (type === 'mandatory') {
+            await this.prismaClient.job.update({
+                where: { id: jobId },
+                data: { mandatorySkills: { connect: { id: skillId } } }
+            });
+        } else {
+            await this.prismaClient.job.update({
+                where: { id: jobId },
+                data: { recommendedSkills: { connect: { id: skillId } } }
+            });
+        }
+    }
+
+    async removeSkill(jobId: number, skillId: number, type: 'mandatory' | 'recommended'): Promise<void> {
+        if (type === 'mandatory') {
+            await this.prismaClient.job.update({
+                where: { id: jobId },
+                data: { mandatorySkills: { disconnect: { id: skillId } } }
+            });
+        } else {
+            await this.prismaClient.job.update({
+                where: { id: jobId },
+                data: { recommendedSkills: { disconnect: { id: skillId } } }
+            });
+        }
+    }
 }

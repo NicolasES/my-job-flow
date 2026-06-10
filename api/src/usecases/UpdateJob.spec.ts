@@ -15,7 +15,9 @@ describe('UpdateJob UseCase', () => {
             create: jest.fn(),
             findById: jest.fn(),
             update: jest.fn(),
-            associateSkills: jest.fn()
+            associateSkills: jest.fn(),
+            addSkill: jest.fn(),
+            removeSkill: jest.fn()
         };
         updateJob = new UpdateJob(mockJobRepository);
 
@@ -47,7 +49,7 @@ describe('UpdateJob UseCase', () => {
 
         expect(mockJobRepository.findById).toHaveBeenCalledWith(1);
         expect(mockJobRepository.update).toHaveBeenCalledWith(expect.any(Job));
-        
+
         expect(updatedJob.getTitle()).toBe('New Title');
         expect(updatedJob.getCompany()).toBe('New Company');
         expect(updatedJob.getWorkModel()).toBe('hybrid');
