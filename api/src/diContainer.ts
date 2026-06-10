@@ -18,6 +18,7 @@ import { SkillController } from '@/controllers/SkillController';
 
 import { JobPrismaRepository } from '@/repositories/JobPrismaRepository';
 import { JobContactPrismaRepository } from '@/repositories/JobContactPrismaRepository';
+import { JobLinkPrismaRepository } from '@/repositories/JobLinkPrismaRepository';
 import { CreateJob } from '@/usecases/CreateJob';
 import { GetJobDetails } from '@/usecases/GetJobDetails';
 import { UpdateJob } from '@/usecases/UpdateJob';
@@ -26,6 +27,9 @@ import { RemoveJobSkill } from '@/usecases/RemoveJobSkill';
 import { AddJobContact } from '@/usecases/AddJobContact';
 import { UpdateJobContact } from '@/usecases/UpdateJobContact';
 import { DeleteJobContact } from '@/usecases/DeleteJobContact';
+import { AddJobLink } from '@/usecases/AddJobLink';
+import { UpdateJobLink } from '@/usecases/UpdateJobLink';
+import { DeleteJobLink } from '@/usecases/DeleteJobLink';
 import { JobController } from '@/controllers/JobController';
 
 import { PrismaUnitOfWork } from "@/repositories/PrismaUnitOfWork";
@@ -52,6 +56,9 @@ container.register('JobDetailsDaoInterface', {
 });
 container.register('JobContactRepositoryInterface', {
     useValue: new JobContactPrismaRepository(prisma)
+});
+container.register('JobLinkRepositoryInterface', {
+    useValue: new JobLinkPrismaRepository(prisma)
 });
 
 // 3. Use Cases
@@ -129,6 +136,22 @@ container.register('DeleteJobContact', {
         c.resolve('JobContactRepositoryInterface')
     )
 });
+container.register('AddJobLink', {
+    useFactory: (c) => new AddJobLink(
+        c.resolve('JobRepositoryInterface'),
+        c.resolve('JobLinkRepositoryInterface')
+    )
+});
+container.register('UpdateJobLink', {
+    useFactory: (c) => new UpdateJobLink(
+        c.resolve('JobLinkRepositoryInterface')
+    )
+});
+container.register('DeleteJobLink', {
+    useFactory: (c) => new DeleteJobLink(
+        c.resolve('JobLinkRepositoryInterface')
+    )
+});
 
 // 4. Controllers
 container.register('JobStatusController', {
@@ -150,7 +173,10 @@ container.register('JobController', {
         c.resolve('RemoveJobSkill'),
         c.resolve('AddJobContact'),
         c.resolve('UpdateJobContact'),
-        c.resolve('DeleteJobContact')
+        c.resolve('DeleteJobContact'),
+        c.resolve('AddJobLink'),
+        c.resolve('UpdateJobLink'),
+        c.resolve('DeleteJobLink')
     )
 });
 

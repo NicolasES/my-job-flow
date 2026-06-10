@@ -15,6 +15,12 @@ import type { DeleteJobContact } from "@/usecases/DeleteJobContact";
 import type { AddJobContactRequest } from "@/request-validations/addJobContactSchema";
 import type { UpdateJobContactRequest } from "@/request-validations/updateJobContactSchema";
 import type { DeleteJobContactRequest } from "@/request-validations/deleteJobContactSchema";
+import type { AddJobLink } from "@/usecases/AddJobLink";
+import type { UpdateJobLink } from "@/usecases/UpdateJobLink";
+import type { DeleteJobLink } from "@/usecases/DeleteJobLink";
+import type { AddJobLinkRequest } from "@/request-validations/addJobLinkSchema";
+import type { UpdateJobLinkRequest } from "@/request-validations/updateJobLinkSchema";
+import type { DeleteJobLinkRequest } from "@/request-validations/deleteJobLinkSchema";
 
 export class JobController {
     constructor(
@@ -25,7 +31,10 @@ export class JobController {
         private readonly removeJobSkillUseCase: RemoveJobSkill,
         private readonly addJobContactUseCase: AddJobContact,
         private readonly updateJobContactUseCase: UpdateJobContact,
-        private readonly deleteJobContactUseCase: DeleteJobContact
+        private readonly deleteJobContactUseCase: DeleteJobContact,
+        private readonly addJobLinkUseCase: AddJobLink,
+        private readonly updateJobLinkUseCase: UpdateJobLink,
+        private readonly deleteJobLinkUseCase: DeleteJobLink
     ) { }
 
     async create(request: CreateJobRequest, reply: FastifyReply) {
@@ -77,6 +86,26 @@ export class JobController {
     async deleteContact(request: DeleteJobContactRequest, reply: FastifyReply) {
         const { id, contactId } = request.params;
         await this.deleteJobContactUseCase.execute({ jobId: id, contactId });
+        return reply.status(200).send({ success: true });
+    }
+
+    async addLink(request: AddJobLinkRequest, reply: FastifyReply) {
+        const { id } = request.params;
+        const { title, url } = request.body;
+        const output = await this.addJobLinkUseCase.execute({ jobId: id, title, url });
+        return reply.status(201).send(output);
+    }
+
+    async updateLink(request: UpdateJobLinkRequest, reply: FastifyReply) {
+        const { id, linkId } = request.params;
+        const { title, url } = request.body;
+        const output = await this.updateJobLinkUseCase.execute({ jobId: id, linkId, title, url });
+        return reply.status(200).send(output);
+    }
+
+    async deleteLink(request: DeleteJobLinkRequest, reply: FastifyReply) {
+        const { id, linkId } = request.params;
+        await this.deleteJobLinkUseCase.execute({ jobId: id, linkId });
         return reply.status(200).send({ success: true });
     }
 }
