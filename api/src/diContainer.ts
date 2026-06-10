@@ -17,6 +17,7 @@ import { DeleteSkill } from '@/usecases/DeleteSkill';
 import { SkillController } from '@/controllers/SkillController';
 
 import { JobPrismaRepository } from '@/repositories/JobPrismaRepository';
+import { JobContactPrismaRepository } from '@/repositories/JobContactPrismaRepository';
 import { CreateJob } from '@/usecases/CreateJob';
 import { GetJobDetails } from '@/usecases/GetJobDetails';
 import { UpdateJob } from '@/usecases/UpdateJob';
@@ -48,6 +49,9 @@ container.register('UnitOfWork', {
 });
 container.register('JobDetailsDaoInterface', {
     useValue: new JobDetailsPrismaDao(prisma)
+});
+container.register('JobContactRepositoryInterface', {
+    useValue: new JobContactPrismaRepository(prisma)
 });
 
 // 3. Use Cases
