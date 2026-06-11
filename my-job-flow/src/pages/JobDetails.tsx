@@ -14,7 +14,7 @@ import { JobCommentsCard } from "../components/job/JobCommentsCard";
 import { JobSkillsCard } from "../components/job/JobSkillsCard";
 
 import { JobContactsCard } from "../components/job/JobContactsCard";
-import { DynamicLinkList } from "../components/form/DynamicLinkList";
+import { JobLinksCard } from "../components/job/JobLinksCard";
 
 export default function JobDetails() {
     const { id } = useParams<{ id: string }>();
@@ -33,12 +33,14 @@ export default function JobDetails() {
         changeStatus,
         addContact,
         updateContact,
-        deleteContact
+        deleteContact,
+        addLink,
+        updateLink,
+        deleteLink
     } = useJobDetails(id);
 
     const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
     const [availableStatuses, setAvailableStatuses] = useState<JobStatus[]>([]);
-    const [links, setLinks] = useState(job?.links || []);
 
     useEffect(() => {
         Promise.all([
@@ -49,12 +51,6 @@ export default function JobDetails() {
             setAvailableStatuses(statuses.sort((a, b) => a.order - b.order));
         });
     }, []);
-
-    useEffect(() => {
-        if (job) {
-            setLinks(job.links || []);
-        }
-    }, [job]);
 
     const handleCreateSkill = async (name: string): Promise<Skill> => {
         const newSkill = await SkillService.create(name);
@@ -115,7 +111,12 @@ export default function JobDetails() {
                         onUpdateContact={updateContact}
                         onDeleteContact={deleteContact} 
                     />
-                    <DynamicLinkList links={links} onChange={setLinks} />
+                    <JobLinksCard 
+                        links={job.links || []} 
+                        onAddLink={addLink} 
+                        onUpdateLink={updateLink} 
+                        onDeleteLink={deleteLink} 
+                    />
                 </div>
             </div>
         </div>

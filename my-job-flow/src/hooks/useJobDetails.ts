@@ -153,6 +153,45 @@ export function useJobDetails(id: string | undefined) {
         }
     };
 
+    const addLink = async (link: { title: string; url: string }) => {
+        if (!job) return;
+        try {
+            const addedLink = await JobService.addLink(job.id, link);
+            setJob(prev => prev ? { ...prev, links: [...(prev.links || []), addedLink] } : prev);
+        } catch (err: any) {
+            console.error("Failed to add link", err);
+            setError(err.message || "Falha ao adicionar link");
+        }
+    };
+
+    const updateLink = async (linkId: number, link: { title?: string; url?: string }) => {
+        if (!job) return;
+        try {
+            await JobService.updateLink(job.id, linkId, link);
+            setJob(prev => {
+                if (!prev) return prev;
+                return {
+                    ...prev,
+                    links: (prev.links || []).map(l => l.id === linkId ? { ...l, ...link } : l)
+                };
+            });
+        } catch (err: any) {
+            console.error("Failed to update link", err);
+            setError(err.message || "Falha ao atualizar link");
+        }
+    };
+
+    const deleteLink = async (linkId: number) => {
+        if (!job) return;
+        try {
+            await JobService.deleteLink(job.id, linkId);
+            setJob(prev => prev ? { ...prev, links: (prev.links || []).filter(l => l.id !== linkId) } : prev);
+        } catch (err: any) {
+            console.error("Failed to delete link", err);
+            setError(err.message || "Falha ao excluir link");
+        }
+    };
+
     return {
         job,
         loading,
@@ -171,6 +210,9 @@ export function useJobDetails(id: string | undefined) {
         changeStatus,
         addContact,
         updateContact,
-        deleteContact
+        deleteContact,
+        addLink,
+        updateLink,
+        deleteLink
     };
 }
