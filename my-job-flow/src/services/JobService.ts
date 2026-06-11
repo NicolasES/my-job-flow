@@ -115,4 +115,24 @@ export class JobService {
             method: 'DELETE'
         });
     }
+
+    static async addContact(jobId: number, contact: { name: string; role?: string; linkedin?: string; phone?: string }): Promise<any> {
+        return await fetchApi(`/jobs/${jobId}/contacts`, {
+            method: 'POST',
+            body: JSON.stringify(contact)
+        });
+    }
+
+    static async updateContact(jobId: number, contactId: number, contact: { name?: string; role?: string; linkedin?: string; phone?: string }): Promise<void> {
+        await fetchApi(`/jobs/${jobId}/contacts/${contactId}`, {
+            method: 'PUT',
+            body: JSON.stringify(contact)
+        });
+    }
+
+    static async deleteContact(jobId: number, contactId: number): Promise<void> {
+        await fetchApi(`/jobs/${jobId}/contacts/${contactId}`, {
+            method: 'DELETE'
+        });
+    }
 }

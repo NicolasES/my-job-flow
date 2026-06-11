@@ -114,6 +114,45 @@ export function useJobDetails(id: string | undefined) {
         }
     };
 
+    const addContact = async (contact: { name: string; role?: string; linkedin?: string; phone?: string }) => {
+        if (!job) return;
+        try {
+            const addedContact = await JobService.addContact(job.id, contact);
+            setJob(prev => prev ? { ...prev, contacts: [...(prev.contacts || []), addedContact] } : prev);
+        } catch (err: any) {
+            console.error("Failed to add contact", err);
+            setError(err.message || "Falha ao adicionar contato");
+        }
+    };
+
+    const updateContact = async (contactId: number, contact: { name?: string; role?: string; linkedin?: string; phone?: string }) => {
+        if (!job) return;
+        try {
+            await JobService.updateContact(job.id, contactId, contact);
+            setJob(prev => {
+                if (!prev) return prev;
+                return {
+                    ...prev,
+                    contacts: (prev.contacts || []).map(c => c.id === contactId ? { ...c, ...contact } : c)
+                };
+            });
+        } catch (err: any) {
+            console.error("Failed to update contact", err);
+            setError(err.message || "Falha ao atualizar contato");
+        }
+    };
+
+    const deleteContact = async (contactId: number) => {
+        if (!job) return;
+        try {
+            await JobService.deleteContact(job.id, contactId);
+            setJob(prev => prev ? { ...prev, contacts: (prev.contacts || []).filter(c => c.id !== contactId) } : prev);
+        } catch (err: any) {
+            console.error("Failed to delete contact", err);
+            setError(err.message || "Falha ao excluir contato");
+        }
+    };
+
     return {
         job,
         loading,
@@ -129,6 +168,9 @@ export function useJobDetails(id: string | undefined) {
         editComment,
         addSkill,
         removeSkill,
-        changeStatus
+        changeStatus,
+        addContact,
+        updateContact,
+        deleteContact
     };
 }

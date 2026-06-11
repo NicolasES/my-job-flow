@@ -13,7 +13,7 @@ import { JobAdditionalInfoCard } from "../components/job/JobAdditionalInfoCard";
 import { JobCommentsCard } from "../components/job/JobCommentsCard";
 import { JobSkillsCard } from "../components/job/JobSkillsCard";
 
-import { DynamicContactList } from "../components/form/DynamicContactList";
+import { JobContactsCard } from "../components/job/JobContactsCard";
 import { DynamicLinkList } from "../components/form/DynamicLinkList";
 
 export default function JobDetails() {
@@ -24,21 +24,21 @@ export default function JobDetails() {
         loading,
         error,
         comments,
-        contacts,
-        links,
-        setContacts,
-        setLinks,
         updateJob,
         addComment,
         removeComment,
         editComment,
         addSkill,
         removeSkill,
-        changeStatus
+        changeStatus,
+        addContact,
+        updateContact,
+        deleteContact
     } = useJobDetails(id);
 
     const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
     const [availableStatuses, setAvailableStatuses] = useState<JobStatus[]>([]);
+    const [links, setLinks] = useState(job?.links || []);
 
     useEffect(() => {
         Promise.all([
@@ -49,6 +49,12 @@ export default function JobDetails() {
             setAvailableStatuses(statuses.sort((a, b) => a.order - b.order));
         });
     }, []);
+
+    useEffect(() => {
+        if (job) {
+            setLinks(job.links || []);
+        }
+    }, [job]);
 
     const handleCreateSkill = async (name: string): Promise<Skill> => {
         const newSkill = await SkillService.create(name);
@@ -103,7 +109,12 @@ export default function JobDetails() {
                         onCreateSkill={handleCreateSkill} 
                     />
 
-                    <DynamicContactList contacts={contacts} onChange={setContacts} />
+                    <JobContactsCard 
+                        contacts={job.contacts || []} 
+                        onAddContact={addContact} 
+                        onUpdateContact={updateContact}
+                        onDeleteContact={deleteContact} 
+                    />
                     <DynamicLinkList links={links} onChange={setLinks} />
                 </div>
             </div>
