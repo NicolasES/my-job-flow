@@ -27,6 +27,9 @@ import { addJobLinkSchema } from '@/request-validations/addJobLinkSchema';
 import { updateJobLinkSchema } from '@/request-validations/updateJobLinkSchema';
 import { deleteJobLinkSchema } from '@/request-validations/deleteJobLinkSchema';
 import { changeJobStatusSchema } from '@/request-validations/changeJobStatusSchema';
+import { addJobCommentSchema } from "@/request-validations/addJobCommentSchema";
+import { updateJobCommentSchema } from "@/request-validations/updateJobCommentSchema";
+import { deleteJobCommentSchema } from "@/request-validations/deleteJobCommentSchema";
 
 export default function registerRoutes({ fastify }: Application) {
     // === JOB STATUS ROUTES ===
@@ -65,4 +68,10 @@ export default function registerRoutes({ fastify }: Application) {
     fastify.post('/jobs/:id/links', addJobLinkSchema, (req, res) => jobController.addLink(req as any, res));
     fastify.put('/jobs/:id/links/:linkId', updateJobLinkSchema, (req, res) => jobController.updateLink(req as any, res));
     fastify.delete('/jobs/:id/links/:linkId', deleteJobLinkSchema, (req, res) => jobController.deleteLink(req as any, res));
+
+    // Job comments
+    const jobCommentController = container.resolve<any>('JobCommentController');
+    fastify.post('/jobs/:id/comments', addJobCommentSchema, (req, res) => jobCommentController.addComment(req as any, res));
+    fastify.put('/jobs/:id/comments/:commentId', updateJobCommentSchema, (req, res) => jobCommentController.updateComment(req as any, res));
+    fastify.delete('/jobs/:id/comments/:commentId', deleteJobCommentSchema, (req, res) => jobCommentController.deleteComment(req as any, res));
 }

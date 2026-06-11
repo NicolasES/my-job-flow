@@ -19,6 +19,7 @@ import { SkillController } from '@/controllers/SkillController';
 import { JobPrismaRepository } from '@/repositories/JobPrismaRepository';
 import { JobContactPrismaRepository } from '@/repositories/JobContactPrismaRepository';
 import { JobLinkPrismaRepository } from '@/repositories/JobLinkPrismaRepository';
+import { JobCommentPrismaRepository } from '@/repositories/JobCommentPrismaRepository';
 import { CreateJob } from '@/usecases/CreateJob';
 import { GetJobDetails } from '@/usecases/GetJobDetails';
 import { UpdateJob } from '@/usecases/UpdateJob';
@@ -31,7 +32,11 @@ import { DeleteJobContact } from '@/usecases/DeleteJobContact';
 import { AddJobLink } from '@/usecases/AddJobLink';
 import { UpdateJobLink } from '@/usecases/UpdateJobLink';
 import { DeleteJobLink } from '@/usecases/DeleteJobLink';
+import { AddJobComment } from '@/usecases/AddJobComment';
+import { UpdateJobComment } from '@/usecases/UpdateJobComment';
+import { DeleteJobComment } from '@/usecases/DeleteJobComment';
 import { JobController } from '@/controllers/JobController';
+import { JobCommentController } from '@/controllers/JobCommentController';
 
 import { PrismaUnitOfWork } from "@/repositories/PrismaUnitOfWork";
 import { JobDetailsPrismaDao } from '@/daos/JobDetailsPrismaDao';
@@ -60,6 +65,9 @@ container.register('JobContactRepositoryInterface', {
 });
 container.register('JobLinkRepositoryInterface', {
     useValue: new JobLinkPrismaRepository(prisma)
+});
+container.register('JobCommentRepositoryInterface', {
+    useValue: new JobCommentPrismaRepository(prisma)
 });
 
 // 3. Use Cases
@@ -163,6 +171,27 @@ container.register('DeleteJobLink', {
     )
 });
 
+container.register('AddJobComment', {
+    useFactory: (c) => new AddJobComment(
+        c.resolve('JobRepositoryInterface'),
+        c.resolve('JobCommentRepositoryInterface')
+    )
+});
+
+container.register('UpdateJobComment', {
+    useFactory: (c) => new UpdateJobComment(
+        c.resolve('JobRepositoryInterface'),
+        c.resolve('JobCommentRepositoryInterface')
+    )
+});
+
+container.register('DeleteJobComment', {
+    useFactory: (c) => new DeleteJobComment(
+        c.resolve('JobRepositoryInterface'),
+        c.resolve('JobCommentRepositoryInterface')
+    )
+});
+
 // 4. Controllers
 container.register('JobStatusController', {
     useFactory: (c) => new JobStatusController(
@@ -188,6 +217,14 @@ container.register('JobController', {
         c.resolve('UpdateJobLink'),
         c.resolve('DeleteJobLink'),
         c.resolve('ChangeJobStatus')
+    )
+});
+
+container.register('JobCommentController', {
+    useFactory: (c) => new JobCommentController(
+        c.resolve('AddJobComment'),
+        c.resolve('UpdateJobComment'),
+        c.resolve('DeleteJobComment')
     )
 });
 
