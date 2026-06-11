@@ -54,17 +54,37 @@ export function useJobDetails(id: string | undefined) {
         }
     };
 
-    const addComment = (text: string) => {
-        if (!text.trim()) return;
-        setComments([{ id: Date.now(), text, date: new Date().toISOString() }, ...comments]);
+    const addComment = async (text: string) => {
+        if (!job || !text.trim()) return;
+        try {
+            const newComment = await JobService.addComment(job.id, text);
+            setComments([newComment, ...comments]);
+        } catch (err: any) {
+            console.error("Failed to add comment", err);
+            setError(err.message || "Falha ao adicionar comentário");
+        }
     };
 
-    const removeComment = (commentId: number) => {
-        setComments(comments.filter(c => c.id !== commentId));
+    const removeComment = async (commentId: number) => {
+        if (!job) return;
+        try {
+            await JobService.deleteComment(job.id, commentId);
+            setComments(comments.filter(c => c.id !== commentId));
+        } catch (err: any) {
+            console.error("Failed to remove comment", err);
+            setError(err.message || "Falha ao remover comentário");
+        }
     };
 
-    const editComment = (commentId: number, text: string) => {
-        setComments(comments.map(c => c.id === commentId ? { ...c, text } : c));
+    const editComment = async (commentId: number, text: string) => {
+        if (!job) return;
+        try {
+            await JobService.updateComment(job.id, commentId, text);
+            setComments(comments.map(c => c.id === commentId ? { ...c, text } : c));
+        } catch (err: any) {
+            console.error("Failed to edit comment", err);
+            setError(err.message || "Falha ao editar comentário");
+        }
     };
 
     const addSkill = async (type: 'mandatory' | 'recommended', skill: {id: number, name: string}) => {

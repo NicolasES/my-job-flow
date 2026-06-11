@@ -150,8 +150,28 @@ export class JobService {
         });
     }
 
-    static async deleteLink(jobId: number, linkId: number): Promise<void> {
-        await fetchApi(`/jobs/${jobId}/links/${linkId}`, {
+    static async deleteLink(jobId: number, linkId: number) {
+        return fetchApi(`/jobs/${jobId}/links/${linkId}`, {
+            method: 'DELETE'
+        });
+    }
+
+    static async addComment(jobId: number, text: string) {
+        return fetchApi(`/jobs/${jobId}/comments`, {
+            method: 'POST',
+            body: JSON.stringify({ text })
+        });
+    }
+
+    static async updateComment(jobId: number, commentId: number, text: string) {
+        return fetchApi(`/jobs/${jobId}/comments/${commentId}`, {
+            method: 'PUT',
+            body: JSON.stringify({ text })
+        });
+    }
+
+    static async deleteComment(jobId: number, commentId: number) {
+        return fetchApi(`/jobs/${jobId}/comments/${commentId}`, {
             method: 'DELETE'
         });
     }

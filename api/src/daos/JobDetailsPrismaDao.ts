@@ -12,7 +12,11 @@ export class JobDetailsPrismaDao implements JobDetailsDaoInterface {
                 status: true,
                 contacts: true,
                 links: true,
-                comments: true,
+                comments: {
+                    orderBy: {
+                        date: 'desc'
+                    }
+                },
                 mandatorySkills: true,
                 recommendedSkills: true
             }
