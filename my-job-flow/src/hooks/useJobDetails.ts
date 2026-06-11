@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { JobService } from "../services/JobService";
 import type { JobDetailsOutput } from "../services/JobService";
 import type { ContactItem } from "../components/form/DynamicContactList";
@@ -35,7 +35,7 @@ export function useJobDetails(id: string | undefined) {
             .finally(() => setLoading(false));
     }, [id]);
 
-    const updateJob = async (updater: (prev: JobDetailsOutput) => JobDetailsOutput) => {
+    const updateJob = useCallback(async (updater: (prev: JobDetailsOutput) => JobDetailsOutput) => {
         if (!job) return;
         const updatedJob = updater(job);
         
@@ -55,45 +55,45 @@ export function useJobDetails(id: string | undefined) {
             console.error("Failed to update job", err);
             toast.error(err.message || "Falha ao atualizar a vaga");
         }
-    };
+    }, [job, toast]);
 
-    const addComment = async (text: string) => {
+    const addComment = useCallback(async (text: string) => {
         if (!job || !text.trim()) return;
         try {
             const newComment = await JobService.addComment(job.id, text);
-            setComments([newComment, ...comments]);
+            setComments(prev => [newComment, ...prev]);
             toast.success("Comentário adicionado");
         } catch (err: any) {
             console.error("Failed to add comment", err);
             toast.error(err.message || "Falha ao adicionar comentário");
         }
-    };
+    }, [job?.id, toast]);
 
-    const removeComment = async (commentId: number) => {
+    const removeComment = useCallback(async (commentId: number) => {
         if (!job) return;
         try {
             await JobService.deleteComment(job.id, commentId);
-            setComments(comments.filter(c => c.id !== commentId));
+            setComments(prev => prev.filter(c => c.id !== commentId));
             toast.success("Comentário excluído");
         } catch (err: any) {
             console.error("Failed to remove comment", err);
             toast.error(err.message || "Falha ao remover comentário");
         }
-    };
+    }, [job?.id, toast]);
 
-    const editComment = async (commentId: number, text: string) => {
+    const editComment = useCallback(async (commentId: number, text: string) => {
         if (!job) return;
         try {
             await JobService.updateComment(job.id, commentId, text);
-            setComments(comments.map(c => c.id === commentId ? { ...c, text } : c));
+            setComments(prev => prev.map(c => c.id === commentId ? { ...c, text } : c));
             toast.success("Comentário editado");
         } catch (err: any) {
             console.error("Failed to edit comment", err);
             toast.error(err.message || "Falha ao editar comentário");
         }
-    };
+    }, [job?.id, toast]);
 
-    const addSkill = async (type: 'mandatory' | 'recommended', skill: {id: number, name: string}) => {
+    const addSkill = useCallback(async (type: 'mandatory' | 'recommended', skill: {id: number, name: string}) => {
         if (!job) return;
         try {
             await JobService.addSkill(job.id, type, skill.id);
@@ -110,9 +110,9 @@ export function useJobDetails(id: string | undefined) {
             console.error("Failed to add skill", err);
             toast.error(err.message || "Falha ao adicionar competência");
         }
-    };
+    }, [job?.id, toast]);
 
-    const changeStatus = async (status: { id: number; name: string; order: number }) => {
+    const changeStatus = useCallback(async (status: { id: number; name: string; order: number }) => {
         if (!job) return;
         try {
             await JobService.changeStatus(job.id, status.id);
@@ -122,9 +122,9 @@ export function useJobDetails(id: string | undefined) {
             console.error("Failed to change status", err);
             toast.error(err.message || "Falha ao atualizar o status");
         }
-    };
+    }, [job?.id, toast]);
 
-    const removeSkill = async (type: 'mandatory' | 'recommended', skillId: number) => {
+    const removeSkill = useCallback(async (type: 'mandatory' | 'recommended', skillId: number) => {
         if (!job) return;
         try {
             await JobService.removeSkill(job.id, type, skillId);
@@ -141,9 +141,9 @@ export function useJobDetails(id: string | undefined) {
             console.error("Failed to remove skill", err);
             toast.error(err.message || "Falha ao remover competência");
         }
-    };
+    }, [job?.id, toast]);
 
-    const addContact = async (contact: { name: string; role?: string; linkedin?: string; phone?: string }) => {
+    const addContact = useCallback(async (contact: { name: string; role?: string; linkedin?: string; phone?: string }) => {
         if (!job) return;
         try {
             const addedContact = await JobService.addContact(job.id, contact);
@@ -153,9 +153,9 @@ export function useJobDetails(id: string | undefined) {
             console.error("Failed to add contact", err);
             toast.error(err.message || "Falha ao adicionar contato");
         }
-    };
+    }, [job?.id, toast]);
 
-    const updateContact = async (contactId: number, contactPayload: { name?: string; role?: string; linkedin?: string; phone?: string }) => {
+    const updateContact = useCallback(async (contactId: number, contactPayload: { name?: string; role?: string; linkedin?: string; phone?: string }) => {
         if (!job) return;
         try {
             await JobService.updateContact(job.id, contactId, contactPayload);
@@ -167,9 +167,9 @@ export function useJobDetails(id: string | undefined) {
             console.error("Failed to update contact", err);
             toast.error(err.message || "Falha ao atualizar contato");
         }
-    };
+    }, [job?.id, toast]);
 
-    const deleteContact = async (contactId: number) => {
+    const deleteContact = useCallback(async (contactId: number) => {
         if (!job) return;
         try {
             await JobService.deleteContact(job.id, contactId);
@@ -179,9 +179,9 @@ export function useJobDetails(id: string | undefined) {
             console.error("Failed to delete contact", err);
             toast.error(err.message || "Falha ao remover contato");
         }
-    };
+    }, [job?.id, toast]);
 
-    const addLink = async (link: { title: string; url: string }) => {
+    const addLink = useCallback(async (link: { title: string; url: string }) => {
         if (!job) return;
         try {
             const addedLink = await JobService.addLink(job.id, link);
@@ -191,9 +191,9 @@ export function useJobDetails(id: string | undefined) {
             console.error("Failed to add link", err);
             toast.error(err.message || "Falha ao adicionar link");
         }
-    };
+    }, [job?.id, toast]);
 
-    const updateLink = async (linkId: number, linkPayload: { title?: string; url?: string }) => {
+    const updateLink = useCallback(async (linkId: number, linkPayload: { title?: string; url?: string }) => {
         if (!job) return;
         try {
             await JobService.updateLink(job.id, linkId, linkPayload);
@@ -205,9 +205,9 @@ export function useJobDetails(id: string | undefined) {
             console.error("Failed to update link", err);
             toast.error(err.message || "Falha ao atualizar link");
         }
-    };
+    }, [job?.id, toast]);
 
-    const deleteLink = async (linkId: number) => {
+    const deleteLink = useCallback(async (linkId: number) => {
         if (!job) return;
         try {
             await JobService.deleteLink(job.id, linkId);
@@ -217,7 +217,7 @@ export function useJobDetails(id: string | undefined) {
             console.error("Failed to delete link", err);
             toast.error(err.message || "Falha ao remover link");
         }
-    };
+    }, [job?.id, toast]);
 
     return {
         job,

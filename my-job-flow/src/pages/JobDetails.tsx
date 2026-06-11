@@ -47,15 +47,25 @@ export default function JobDetails() {
     const [availableStatuses, setAvailableStatuses] = useState<JobStatus[]>([]);
 
     useEffect(() => {
+        let isMounted = true;
+
         Promise.all([
             SkillService.findAll(),
             JobStatusService.findAll()
         ]).then(([skills, statuses]) => {
-            setAvailableSkills(skills);
-            setAvailableStatuses(statuses.sort((a, b) => a.order - b.order));
+            if (isMounted) {
+                setAvailableSkills(skills);
+                setAvailableStatuses(statuses.sort((a, b) => a.order - b.order));
+            }
         }).catch(() => {
-            toast.error("Falha ao carregar opções (competências e status)");
+            if (isMounted) {
+                toast.error("Falha ao carregar opções (competências e status)");
+            }
         });
+
+        return () => {
+            isMounted = false;
+        };
     }, [toast]);
 
     const handleCreateSkill = async (name: string): Promise<Skill> => {
