@@ -7,15 +7,47 @@ interface JobHeaderProps {
     job: JobDetailsOutput;
     availableStatuses: JobStatus[];
     onChangeStatus: (status: JobStatus) => void;
+    onUpdateJob: (updater: (prev: JobDetailsOutput) => JobDetailsOutput) => void;
 }
 
-export function JobHeader({ job, availableStatuses, onChangeStatus }: JobHeaderProps) {
+export function JobHeader({ job, availableStatuses, onChangeStatus, onUpdateJob }: JobHeaderProps) {
     const [isEditingStatus, setIsEditingStatus] = useState(false);
+    const [isEditingTitle, setIsEditingTitle] = useState(false);
+    const [editTitle, setEditTitle] = useState("");
+
+    const handleSaveTitle = () => {
+        if (editTitle.trim()) {
+            onUpdateJob(prev => ({ ...prev, title: editTitle.trim() }));
+        }
+        setIsEditingTitle(false);
+    };
 
     return (
         <div className="flex justify-between items-start mb-8">
             <div>
-                <h1 className="text-3xl font-semibold text-white">{job.title}</h1>
+                {isEditingTitle ? (
+                    <div className="flex items-center gap-2">
+                        <input
+                            type="text"
+                            value={editTitle}
+                            onChange={e => setEditTitle(e.target.value)}
+                            className="bg-slate-800 border border-slate-600 text-slate-200 text-3xl font-semibold rounded-md px-2 py-1 focus:outline-none focus:border-blue-500"
+                            autoFocus
+                        />
+                        <button onClick={() => setIsEditingTitle(false)} className="text-sm text-slate-400 hover:text-white">Cancelar</button>
+                        <button onClick={handleSaveTitle} className="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Salvar</button>
+                    </div>
+                ) : (
+                    <div className="flex items-center gap-2 group">
+                        <h1 className="text-3xl font-semibold text-white">{job.title}</h1>
+                        <button 
+                            onClick={() => { setEditTitle(job.title); setIsEditingTitle(true); }}
+                            className="text-xs text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                            Editar
+                        </button>
+                    </div>
+                )}
                 <p className="text-slate-400 mt-1">
                     {job.company} • {getWorkModelLabel(job.workModel)}
                 </p>

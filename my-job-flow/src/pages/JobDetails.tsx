@@ -71,6 +71,7 @@ export default function JobDetails() {
                 job={job} 
                 availableStatuses={availableStatuses} 
                 onChangeStatus={changeStatus} 
+                onUpdateJob={updateJob}
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl">
