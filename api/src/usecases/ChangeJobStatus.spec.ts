@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import { ChangeJobStatus } from "./ChangeJobStatus";
 import { Job } from "../entities/Job";
 import { JobStatus } from "../entities/JobStatus";
@@ -50,14 +51,14 @@ describe('ChangeJobStatus UseCase', () => {
 
     it('should throw error if status does not exist', async () => {
         const oldStatus = new JobStatus({ id: 1, name: 'Applied', order: 1 });
-        const job = new Job({ 
-            id: 1, 
-            title: 'Dev', 
-            company: 'Tech', 
+        const job = new Job({
+            id: 1,
+            title: 'Dev',
+            company: 'Tech',
             description: '',
             appliedAt: new Date(),
-            workModel: 'remote', 
-            status: oldStatus 
+            workModel: 'remote',
+            status: oldStatus
         });
         mockJobRepository.findById.mockResolvedValue(job);
         mockJobStatusRepository.findById.mockResolvedValue(null);

@@ -27,11 +27,11 @@ describe('CreateJob UseCase', () => {
 
         jobContactRepository = {
             createMany: jest.fn()
-        };
+        } as unknown as jest.Mocked<JobContactRepositoryInterface>;
 
         jobLinkRepository = {
             createMany: jest.fn()
-        };
+        } as unknown as jest.Mocked<JobLinkRepositoryInterface>;
 
         unitOfWork = {
             execute: jest.fn().mockImplementation(async (work: any) => {
