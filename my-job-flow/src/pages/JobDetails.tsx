@@ -12,18 +12,22 @@ import { JobDescriptionCard } from "../components/job/JobDescriptionCard";
 import { JobAdditionalInfoCard } from "../components/job/JobAdditionalInfoCard";
 import { JobCommentsCard } from "../components/job/JobCommentsCard";
 import { JobSkillsCard } from "../components/job/JobSkillsCard";
+import { useToast } from "../contexts/ToastContext";
 
 import { JobContactsCard } from "../components/job/JobContactsCard";
 import { JobLinksCard } from "../components/job/JobLinksCard";
 
 export default function JobDetails() {
     const { id } = useParams<{ id: string }>();
+    const toast = useToast();
 
     const {
         job,
         loading,
         error,
         comments,
+        contacts,
+        links,
         updateJob,
         addComment,
         removeComment,
@@ -49,13 +53,20 @@ export default function JobDetails() {
         ]).then(([skills, statuses]) => {
             setAvailableSkills(skills);
             setAvailableStatuses(statuses.sort((a, b) => a.order - b.order));
+        }).catch(() => {
+            toast.error("Falha ao carregar opções (competências e status)");
         });
-    }, []);
+    }, [toast]);
 
     const handleCreateSkill = async (name: string): Promise<Skill> => {
-        const newSkill = await SkillService.create(name);
-        setAvailableSkills(prev => [...prev, newSkill]);
-        return newSkill;
+        try {
+            const newSkill = await SkillService.create(name);
+            setAvailableSkills(prev => [...prev, newSkill]);
+            return newSkill;
+        } catch (err: any) {
+            toast.error("Falha ao criar competência");
+            throw err;
+        }
     };
 
     if (loading) {
@@ -69,53 +80,53 @@ export default function JobDetails() {
     return (
         <div className="flex flex-col h-full p-8 overflow-y-auto custom-scrollbar">
 
-            <JobHeader 
-                job={job} 
-                availableStatuses={availableStatuses} 
-                onChangeStatus={changeStatus} 
+            <JobHeader
+                job={job}
+                availableStatuses={availableStatuses}
+                onChangeStatus={changeStatus}
                 onUpdateJob={updateJob}
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl">
                 <div className="lg:col-span-2 flex flex-col gap-6">
-                    <JobDescriptionCard 
-                        job={job} 
-                        onUpdateJob={updateJob} 
+                    <JobDescriptionCard
+                        job={job}
+                        onUpdateJob={updateJob}
                     />
 
-                    <JobCommentsCard 
-                        comments={comments} 
-                        onAddComment={addComment} 
-                        onRemoveComment={removeComment} 
-                        onEditComment={editComment} 
+                    <JobCommentsCard
+                        comments={comments}
+                        onAddComment={addComment}
+                        onRemoveComment={removeComment}
+                        onEditComment={editComment}
                     />
                 </div>
 
                 <div className="flex flex-col gap-6">
-                    <JobAdditionalInfoCard 
-                        job={job} 
-                        onUpdateJob={updateJob} 
+                    <JobAdditionalInfoCard
+                        job={job}
+                        onUpdateJob={updateJob}
                     />
 
-                    <JobSkillsCard 
-                        job={job} 
-                        availableSkills={availableSkills} 
+                    <JobSkillsCard
+                        job={job}
+                        availableSkills={availableSkills}
                         onAddSkill={addSkill}
                         onRemoveSkill={removeSkill}
-                        onCreateSkill={handleCreateSkill} 
+                        onCreateSkill={handleCreateSkill}
                     />
 
-                    <JobContactsCard 
-                        contacts={job.contacts || []} 
-                        onAddContact={addContact} 
+                    <JobContactsCard
+                        contacts={contacts || []}
+                        onAddContact={addContact}
                         onUpdateContact={updateContact}
-                        onDeleteContact={deleteContact} 
+                        onDeleteContact={deleteContact}
                     />
-                    <JobLinksCard 
-                        links={job.links || []} 
-                        onAddLink={addLink} 
-                        onUpdateLink={updateLink} 
-                        onDeleteLink={deleteLink} 
+                    <JobLinksCard
+                        links={links || []}
+                        onAddLink={addLink}
+                        onUpdateLink={updateLink}
+                        onDeleteLink={deleteLink}
                     />
                 </div>
             </div>
