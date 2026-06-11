@@ -96,6 +96,13 @@ export class JobService {
         });
     }
 
+    static async changeStatus(id: number, statusId: number): Promise<void> {
+        await fetchApi(`/jobs/${id}/status`, {
+            method: 'PATCH',
+            body: JSON.stringify({ statusId })
+        });
+    }
+
     static async addSkill(jobId: number, type: 'mandatory' | 'recommended', skillId: number): Promise<void> {
         await fetchApi(`/jobs/${jobId}/skills/${type}`, {
             method: 'POST',

@@ -33,7 +33,8 @@ export default function JobDetails() {
         removeComment,
         editComment,
         addSkill,
-        removeSkill
+        removeSkill,
+        changeStatus
     } = useJobDetails(id);
 
     const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
@@ -69,7 +70,7 @@ export default function JobDetails() {
             <JobHeader 
                 job={job} 
                 availableStatuses={availableStatuses} 
-                onUpdateJob={updateJob} 
+                onChangeStatus={changeStatus} 
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl">

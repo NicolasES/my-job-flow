@@ -21,6 +21,8 @@ import type { DeleteJobLink } from "@/usecases/DeleteJobLink";
 import type { AddJobLinkRequest } from "@/request-validations/addJobLinkSchema";
 import type { UpdateJobLinkRequest } from "@/request-validations/updateJobLinkSchema";
 import type { DeleteJobLinkRequest } from "@/request-validations/deleteJobLinkSchema";
+import type { ChangeJobStatus } from "@/usecases/ChangeJobStatus";
+import type { ChangeJobStatusRequest } from "@/request-validations/changeJobStatusSchema";
 
 export class JobController {
     constructor(
@@ -34,7 +36,8 @@ export class JobController {
         private readonly deleteJobContactUseCase: DeleteJobContact,
         private readonly addJobLinkUseCase: AddJobLink,
         private readonly updateJobLinkUseCase: UpdateJobLink,
-        private readonly deleteJobLinkUseCase: DeleteJobLink
+        private readonly deleteJobLinkUseCase: DeleteJobLink,
+        private readonly changeJobStatusUseCase: ChangeJobStatus
     ) { }
 
     async create(request: CreateJobRequest, reply: FastifyReply) {
@@ -53,6 +56,13 @@ export class JobController {
         const { id } = request.params;
         const data = request.body;
         await this.updateJobUseCase.execute(id, data);
+        return reply.status(200).send({ success: true });
+    }
+
+    async changeStatus(request: ChangeJobStatusRequest, reply: FastifyReply) {
+        const { id } = request.params;
+        const { statusId } = request.body;
+        await this.changeJobStatusUseCase.execute({ jobId: id, statusId });
         return reply.status(200).send({ success: true });
     }
 

@@ -26,6 +26,7 @@ import { deleteJobContactSchema } from '@/request-validations/deleteJobContactSc
 import { addJobLinkSchema } from '@/request-validations/addJobLinkSchema';
 import { updateJobLinkSchema } from '@/request-validations/updateJobLinkSchema';
 import { deleteJobLinkSchema } from '@/request-validations/deleteJobLinkSchema';
+import { changeJobStatusSchema } from '@/request-validations/changeJobStatusSchema';
 
 export default function registerRoutes({ fastify }: Application) {
     // === JOB STATUS ROUTES ===
@@ -49,14 +50,18 @@ export default function registerRoutes({ fastify }: Application) {
     fastify.post('/jobs', createJobSchema, (req, rep) => jobController.create(req as any, rep));
     fastify.get('/jobs/:id', getJobDetailsSchema, (req, rep) => jobController.getDetails(req as any, rep));
     fastify.put('/jobs/:id', updateJobSchema, (req, rep) => jobController.update(req as any, rep));
+    fastify.patch('/jobs/:id/status', changeJobStatusSchema, (req, rep) => jobController.changeStatus(req as any, rep));
+
+    // Job skills
     fastify.post('/jobs/:id/skills/:type', addJobSkillSchema, (req, rep) => jobController.addSkill(req as any, rep));
     fastify.delete('/jobs/:id/skills/:type/:skillId', removeJobSkillSchema, (req, rep) => jobController.removeSkill(req as any, rep));
 
+    // Job contacts
     fastify.post('/jobs/:id/contacts', addJobContactSchema, (req, rep) => jobController.addContact(req as any, rep));
     fastify.put('/jobs/:id/contacts/:contactId', updateJobContactSchema, (req, rep) => jobController.updateContact(req as any, rep));
     fastify.delete('/jobs/:id/contacts/:contactId', deleteJobContactSchema, (req, res) => jobController.deleteContact(req as any, res));
 
-    // Links
+    // Job links
     fastify.post('/jobs/:id/links', addJobLinkSchema, (req, res) => jobController.addLink(req as any, res));
     fastify.put('/jobs/:id/links/:linkId', updateJobLinkSchema, (req, res) => jobController.updateLink(req as any, res));
     fastify.delete('/jobs/:id/links/:linkId', deleteJobLinkSchema, (req, res) => jobController.deleteLink(req as any, res));

@@ -6,10 +6,10 @@ import { getWorkModelLabel } from "../../services/JobService";
 interface JobHeaderProps {
     job: JobDetailsOutput;
     availableStatuses: JobStatus[];
-    onUpdateJob: (updater: (prev: JobDetailsOutput) => JobDetailsOutput) => void;
+    onChangeStatus: (status: JobStatus) => void;
 }
 
-export function JobHeader({ job, availableStatuses, onUpdateJob }: JobHeaderProps) {
+export function JobHeader({ job, availableStatuses, onChangeStatus }: JobHeaderProps) {
     const [isEditingStatus, setIsEditingStatus] = useState(false);
 
     return (
@@ -31,7 +31,7 @@ export function JobHeader({ job, availableStatuses, onUpdateJob }: JobHeaderProp
                                 const selectedId = Number(e.target.value);
                                 const selectedStatus = availableStatuses.find(s => s.id === selectedId);
                                 if (selectedStatus) {
-                                    onUpdateJob(prev => ({ ...prev, status: selectedStatus }));
+                                    onChangeStatus(selectedStatus);
                                 }
                                 setIsEditingStatus(false);
                             }}

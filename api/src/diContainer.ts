@@ -22,6 +22,7 @@ import { JobLinkPrismaRepository } from '@/repositories/JobLinkPrismaRepository'
 import { CreateJob } from '@/usecases/CreateJob';
 import { GetJobDetails } from '@/usecases/GetJobDetails';
 import { UpdateJob } from '@/usecases/UpdateJob';
+import { ChangeJobStatus } from '@/usecases/ChangeJobStatus';
 import { AddJobSkill } from '@/usecases/AddJobSkill';
 import { RemoveJobSkill } from '@/usecases/RemoveJobSkill';
 import { AddJobContact } from '@/usecases/AddJobContact';
@@ -88,6 +89,18 @@ container.register('DeleteSkill', {
     useFactory: (c) => new DeleteSkill(c.resolve('SkillRepositoryInterface'))
 });
 
+container.register('UpdateJob', {
+    useFactory: (c) => new UpdateJob(
+        c.resolve('JobRepositoryInterface')
+    )
+});
+container.register('ChangeJobStatus', {
+    useFactory: (c) => new ChangeJobStatus(
+        c.resolve('JobRepositoryInterface'),
+        c.resolve('JobStatusRepositoryInterface')
+    )
+});
+
 container.register('CreateJob', {
     useFactory: (c) => new CreateJob(
         c.resolve('UnitOfWork'),
@@ -100,9 +113,6 @@ container.register('GetJobDetails', {
     useFactory: (c) => new GetJobDetails(c.resolve('JobDetailsDaoInterface'))
 });
 
-container.register('UpdateJob', {
-    useFactory: (c) => new UpdateJob(c.resolve('JobRepositoryInterface'))
-});
 
 container.register('AddJobSkill', {
     useFactory: (c) => new AddJobSkill(
@@ -176,7 +186,8 @@ container.register('JobController', {
         c.resolve('DeleteJobContact'),
         c.resolve('AddJobLink'),
         c.resolve('UpdateJobLink'),
-        c.resolve('DeleteJobLink')
+        c.resolve('DeleteJobLink'),
+        c.resolve('ChangeJobStatus')
     )
 });
 

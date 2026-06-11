@@ -85,6 +85,17 @@ export function useJobDetails(id: string | undefined) {
         }
     };
 
+    const changeStatus = async (status: { id: number; name: string; order: number }) => {
+        if (!job) return;
+        try {
+            await JobService.changeStatus(job.id, status.id);
+            setJob(prev => prev ? { ...prev, status } : prev);
+        } catch (err: any) {
+            console.error("Failed to change status", err);
+            setError(err.message || "Falha ao atualizar o status");
+        }
+    };
+
     const removeSkill = async (type: 'mandatory' | 'recommended', skillId: number) => {
         if (!job) return;
         try {
@@ -117,6 +128,7 @@ export function useJobDetails(id: string | undefined) {
         removeComment,
         editComment,
         addSkill,
-        removeSkill
+        removeSkill,
+        changeStatus
     };
 }
