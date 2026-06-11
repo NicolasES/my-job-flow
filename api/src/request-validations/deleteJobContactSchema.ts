@@ -1,15 +1,12 @@
+import { z } from 'zod';
 import type { FastifyRequest } from 'fastify';
 
 export const deleteJobContactSchema = {
     schema: {
-        params: {
-            type: 'object',
-            properties: {
-                id: { type: 'integer' },
-                contactId: { type: 'integer' }
-            },
-            required: ['id', 'contactId']
-        }
+        params: z.object({
+            id: z.coerce.number().int(),
+            contactId: z.coerce.number().int()
+        })
     }
 };
 

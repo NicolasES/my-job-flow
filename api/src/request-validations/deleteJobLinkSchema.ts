@@ -1,15 +1,12 @@
+import { z } from 'zod';
 import type { FastifyRequest } from 'fastify';
 
 export const deleteJobLinkSchema = {
     schema: {
-        params: {
-            type: 'object',
-            properties: {
-                id: { type: 'integer' },
-                linkId: { type: 'integer' }
-            },
-            required: ['id', 'linkId']
-        }
+        params: z.object({
+            id: z.coerce.number().int(),
+            linkId: z.coerce.number().int()
+        })
     }
 };
 

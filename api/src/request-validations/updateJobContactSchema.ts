@@ -1,24 +1,18 @@
+import { z } from 'zod';
 import type { FastifyRequest } from 'fastify';
 
 export const updateJobContactSchema = {
     schema: {
-        params: {
-            type: 'object',
-            properties: {
-                id: { type: 'integer' },
-                contactId: { type: 'integer' }
-            },
-            required: ['id', 'contactId']
-        },
-        body: {
-            type: 'object',
-            properties: {
-                name: { type: 'string', minLength: 1 },
-                role: { type: 'string', nullable: true },
-                linkedin: { type: 'string', nullable: true },
-                phone: { type: 'string', nullable: true }
-            }
-        }
+        params: z.object({
+            id: z.coerce.number().int(),
+            contactId: z.coerce.number().int()
+        }),
+        body: z.object({
+            name: z.string().min(1).optional(),
+            role: z.string().nullable().optional(),
+            linkedin: z.string().nullable().optional(),
+            phone: z.string().nullable().optional()
+        })
     }
 };
 

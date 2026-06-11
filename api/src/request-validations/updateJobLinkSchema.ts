@@ -1,22 +1,16 @@
+import { z } from 'zod';
 import type { FastifyRequest } from 'fastify';
 
 export const updateJobLinkSchema = {
     schema: {
-        params: {
-            type: 'object',
-            properties: {
-                id: { type: 'integer' },
-                linkId: { type: 'integer' }
-            },
-            required: ['id', 'linkId']
-        },
-        body: {
-            type: 'object',
-            properties: {
-                title: { type: 'string', minLength: 1 },
-                url: { type: 'string', minLength: 1 }
-            }
-        }
+        params: z.object({
+            id: z.coerce.number().int(),
+            linkId: z.coerce.number().int()
+        }),
+        body: z.object({
+            title: z.string().min(1).optional(),
+            url: z.string().min(1).optional()
+        })
     }
 };
 

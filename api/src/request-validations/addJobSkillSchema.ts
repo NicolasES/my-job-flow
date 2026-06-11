@@ -1,22 +1,15 @@
-import type { FastifyRequest } from "fastify";
+import { z } from 'zod';
+import type { FastifyRequest } from 'fastify';
 
 export const addJobSkillSchema = {
     schema: {
-        params: {
-            type: 'object',
-            properties: {
-                id: { type: 'integer' },
-                type: { type: 'string', enum: ['mandatory', 'recommended'] }
-            },
-            required: ['id', 'type']
-        },
-        body: {
-            type: 'object',
-            properties: {
-                skillId: { type: 'integer' }
-            },
-            required: ['skillId']
-        }
+        params: z.object({
+            id: z.coerce.number().int(),
+            type: z.enum(['mandatory', 'recommended'])
+        }),
+        body: z.object({
+            skillId: z.number().int()
+        })
     }
 };
 

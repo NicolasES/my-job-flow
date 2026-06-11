@@ -1,16 +1,13 @@
-import type { FastifyRequest } from "fastify";
+import { z } from 'zod';
+import type { FastifyRequest } from 'fastify';
 
 export const removeJobSkillSchema = {
     schema: {
-        params: {
-            type: 'object',
-            properties: {
-                id: { type: 'integer' },
-                type: { type: 'string', enum: ['mandatory', 'recommended'] },
-                skillId: { type: 'integer' }
-            },
-            required: ['id', 'type', 'skillId']
-        }
+        params: z.object({
+            id: z.coerce.number().int(),
+            type: z.enum(['mandatory', 'recommended']),
+            skillId: z.coerce.number().int()
+        })
     }
 };
 
