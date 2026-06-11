@@ -31,6 +31,9 @@ import { addJobCommentSchema } from "@/request-validations/addJobCommentSchema";
 import { updateJobCommentSchema } from "@/request-validations/updateJobCommentSchema";
 import { deleteJobCommentSchema } from "@/request-validations/deleteJobCommentSchema";
 
+// Dashboard
+import { DashboardController } from "@/controllers/DashboardController";
+
 export default function registerRoutes({ fastify }: Application) {
     // === JOB STATUS ROUTES ===
     const jobStatusController = container.resolve<JobStatusController>('JobStatusController');
@@ -74,4 +77,8 @@ export default function registerRoutes({ fastify }: Application) {
     fastify.post('/jobs/:id/comments', addJobCommentSchema, (req, res) => jobCommentController.addComment(req as any, res));
     fastify.put('/jobs/:id/comments/:commentId', updateJobCommentSchema, (req, res) => jobCommentController.updateComment(req as any, res));
     fastify.delete('/jobs/:id/comments/:commentId', deleteJobCommentSchema, (req, res) => jobCommentController.deleteComment(req as any, res));
+
+    // === DASHBOARD ROUTES ===
+    const dashboardController = container.resolve<DashboardController>('DashboardController');
+    fastify.get('/dashboard/jobs', (req, rep) => dashboardController.getJobs(req as any, rep));
 }

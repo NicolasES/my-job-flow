@@ -40,6 +40,9 @@ import { JobCommentController } from '@/controllers/JobCommentController';
 
 import { PrismaUnitOfWork } from "@/repositories/PrismaUnitOfWork";
 import { JobDetailsPrismaDao } from '@/daos/JobDetailsPrismaDao';
+import { DashboardPrismaDao } from '@/daos/DashboardPrismaDao';
+import { GetDashboardJobs } from '@/usecases/GetDashboardJobs';
+import { DashboardController } from '@/controllers/DashboardController';
 
 // 1. Prisma Client Singleton
 container.registerInstance('PrismaClient', prisma);
@@ -59,6 +62,9 @@ container.register('UnitOfWork', {
 });
 container.register('JobDetailsDaoInterface', {
     useValue: new JobDetailsPrismaDao(prisma)
+});
+container.register('DashboardDaoInterface', {
+    useValue: new DashboardPrismaDao(prisma)
 });
 container.register('JobContactRepositoryInterface', {
     useValue: new JobContactPrismaRepository(prisma)
@@ -179,17 +185,13 @@ container.register('AddJobComment', {
 });
 
 container.register('UpdateJobComment', {
-    useFactory: (c) => new UpdateJobComment(
-        c.resolve('JobRepositoryInterface'),
-        c.resolve('JobCommentRepositoryInterface')
-    )
+    useFactory: (c) => new UpdateJobComment(c.resolve('JobRepositoryInterface'), c.resolve('JobCommentRepositoryInterface'))
 });
-
 container.register('DeleteJobComment', {
-    useFactory: (c) => new DeleteJobComment(
-        c.resolve('JobRepositoryInterface'),
-        c.resolve('JobCommentRepositoryInterface')
-    )
+    useFactory: (c) => new DeleteJobComment(c.resolve('JobRepositoryInterface'), c.resolve('JobCommentRepositoryInterface'))
+});
+container.register('GetDashboardJobs', {
+    useFactory: (c) => new GetDashboardJobs(c.resolve('DashboardDaoInterface'))
 });
 
 // 4. Controllers
@@ -226,6 +228,10 @@ container.register('JobCommentController', {
         c.resolve('UpdateJobComment'),
         c.resolve('DeleteJobComment')
     )
+});
+
+container.register('DashboardController', {
+    useFactory: (c) => new DashboardController(c.resolve('GetDashboardJobs'))
 });
 
 container.register('SkillController', {
