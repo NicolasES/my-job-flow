@@ -95,4 +95,17 @@ export class JobService {
             body: JSON.stringify(data)
         });
     }
+
+    static async addSkill(jobId: number, type: 'mandatory' | 'recommended', skillId: number): Promise<void> {
+        await fetchApi(`/jobs/${jobId}/skills/${type}`, {
+            method: 'POST',
+            body: JSON.stringify({ skillId })
+        });
+    }
+
+    static async removeSkill(jobId: number, type: 'mandatory' | 'recommended', skillId: number): Promise<void> {
+        await fetchApi(`/jobs/${jobId}/skills/${type}/${skillId}`, {
+            method: 'DELETE'
+        });
+    }
 }

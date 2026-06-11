@@ -67,6 +67,42 @@ export function useJobDetails(id: string | undefined) {
         setComments(comments.map(c => c.id === commentId ? { ...c, text } : c));
     };
 
+    const addSkill = async (type: 'mandatory' | 'recommended', skill: {id: number, name: string}) => {
+        if (!job) return;
+        try {
+            await JobService.addSkill(job.id, type, skill.id);
+            setJob(prev => {
+                if (!prev) return prev;
+                if (type === 'mandatory') {
+                    return { ...prev, mandatorySkills: [...prev.mandatorySkills, skill] };
+                } else {
+                    return { ...prev, recommendedSkills: [...prev.recommendedSkills, skill] };
+                }
+            });
+        } catch (err: any) {
+            console.error("Failed to add skill", err);
+            setError(err.message || "Falha ao adicionar competência");
+        }
+    };
+
+    const removeSkill = async (type: 'mandatory' | 'recommended', skillId: number) => {
+        if (!job) return;
+        try {
+            await JobService.removeSkill(job.id, type, skillId);
+            setJob(prev => {
+                if (!prev) return prev;
+                if (type === 'mandatory') {
+                    return { ...prev, mandatorySkills: prev.mandatorySkills.filter(s => s.id !== skillId) };
+                } else {
+                    return { ...prev, recommendedSkills: prev.recommendedSkills.filter(s => s.id !== skillId) };
+                }
+            });
+        } catch (err: any) {
+            console.error("Failed to remove skill", err);
+            setError(err.message || "Falha ao remover competência");
+        }
+    };
+
     return {
         job,
         loading,
@@ -79,6 +115,8 @@ export function useJobDetails(id: string | undefined) {
         updateJob,
         addComment,
         removeComment,
-        editComment
+        editComment,
+        addSkill,
+        removeSkill
     };
 }

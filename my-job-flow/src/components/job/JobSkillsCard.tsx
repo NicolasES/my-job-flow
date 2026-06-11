@@ -6,11 +6,12 @@ import type { JobDetailsOutput } from "../../services/JobService";
 interface JobSkillsCardProps {
     job: JobDetailsOutput;
     availableSkills: Skill[];
-    onUpdateJob: (updater: (prev: JobDetailsOutput) => JobDetailsOutput) => void;
+    onAddSkill: (type: 'mandatory' | 'recommended', skill: {id: number, name: string}) => Promise<void>;
+    onRemoveSkill: (type: 'mandatory' | 'recommended', skillId: number) => Promise<void>;
     onCreateSkill: (name: string) => Promise<Skill>;
 }
 
-export function JobSkillsCard({ job, availableSkills, onUpdateJob, onCreateSkill }: JobSkillsCardProps) {
+export function JobSkillsCard({ job, availableSkills, onAddSkill, onRemoveSkill, onCreateSkill }: JobSkillsCardProps) {
     return (
         <section className="bg-slate-800 p-6 rounded-lg border border-slate-700">
             <h2 className="text-lg font-medium text-white mb-4">Competências</h2>
@@ -22,19 +23,13 @@ export function JobSkillsCard({ job, availableSkills, onUpdateJob, onCreateSkill
                             <SkillTag
                                 key={skill.id}
                                 label={skill.name}
-                                onRemove={() => onUpdateJob(prev => ({ 
-                                    ...prev, 
-                                    mandatorySkills: prev.mandatorySkills.filter(s => s.id !== skill.id) 
-                                }))}
+                                onRemove={() => onRemoveSkill('mandatory', skill.id)}
                             />
                         ))}
                         <SkillAutocomplete
                             availableSkills={availableSkills}
                             alreadySelected={[...job.mandatorySkills, ...job.recommendedSkills]}
-                            onAddSkill={skill => onUpdateJob(prev => ({ 
-                                ...prev, 
-                                mandatorySkills: [...prev.mandatorySkills, skill] 
-                            }))}
+                            onAddSkill={skill => onAddSkill('mandatory', skill)}
                             onCreateSkill={onCreateSkill}
                         />
                     </div>
@@ -46,19 +41,13 @@ export function JobSkillsCard({ job, availableSkills, onUpdateJob, onCreateSkill
                             <SkillTag
                                 key={skill.id}
                                 label={skill.name}
-                                onRemove={() => onUpdateJob(prev => ({ 
-                                    ...prev, 
-                                    recommendedSkills: prev.recommendedSkills.filter(s => s.id !== skill.id) 
-                                }))}
+                                onRemove={() => onRemoveSkill('recommended', skill.id)}
                             />
                         ))}
                         <SkillAutocomplete
                             availableSkills={availableSkills}
                             alreadySelected={[...job.mandatorySkills, ...job.recommendedSkills]}
-                            onAddSkill={skill => onUpdateJob(prev => ({ 
-                                ...prev, 
-                                recommendedSkills: [...prev.recommendedSkills, skill] 
-                            }))}
+                            onAddSkill={skill => onAddSkill('recommended', skill)}
                             onCreateSkill={onCreateSkill}
                         />
                     </div>

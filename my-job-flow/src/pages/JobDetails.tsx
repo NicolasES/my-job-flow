@@ -31,7 +31,9 @@ export default function JobDetails() {
         updateJob,
         addComment,
         removeComment,
-        editComment
+        editComment,
+        addSkill,
+        removeSkill
     } = useJobDetails(id);
 
     const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
@@ -94,7 +96,8 @@ export default function JobDetails() {
                     <JobSkillsCard 
                         job={job} 
                         availableSkills={availableSkills} 
-                        onUpdateJob={updateJob} 
+                        onAddSkill={addSkill}
+                        onRemoveSkill={removeSkill}
                         onCreateSkill={handleCreateSkill} 
                     />
 
