@@ -32,11 +32,14 @@ const router = createBrowserRouter([
 ])
 
 import { ToastProvider } from './contexts/ToastContext'
+import { ModalProvider } from './contexts/ModalContext'
 
 function App() {
   return (
     <ToastProvider>
-      <RouterProvider router={router} />
+      <ModalProvider>
+        <RouterProvider router={router} />
+      </ModalProvider>
     </ToastProvider>
   )
 }

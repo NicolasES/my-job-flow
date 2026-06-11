@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { TextInput } from '../form/TextInput';
 import type { ContactItem } from '../form/DynamicContactList';
+import { useModal } from '../../contexts/ModalContext';
 
 interface JobContactsCardProps {
     contacts: ContactItem[];
@@ -13,7 +14,8 @@ export function JobContactsCard({ contacts, onAddContact, onUpdateContact, onDel
     const [isAdding, setIsAdding] = useState(false);
     const [newContact, setNewContact] = useState({ name: '', role: '', linkedin: '', phone: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
-    
+    const modal = useModal();
+
     const [editingContactId, setEditingContactId] = useState<number | null>(null);
     const [editContact, setEditContact] = useState({ name: '', role: '', linkedin: '', phone: '' });
 
@@ -45,9 +47,16 @@ export function JobContactsCard({ contacts, onAddContact, onUpdateContact, onDel
         setEditingContactId(null);
     };
 
-    const handleRemove = async (id: number) => {
-        if(confirm('Deseja excluir este contato?')) {
-            await onDeleteContact(id);
+    const handleDelete = async (contact: ContactItem) => {
+        const isConfirmed = await modal.confirm({
+            title: 'Excluir Contato',
+            message: `Tem certeza que deseja excluir o contato ${contact.name}? Esta ação não pode ser desfeita.`,
+            confirmText: 'Excluir',
+            variant: 'danger'
+        });
+
+        if (isConfirmed) {
+            await onDeleteContact(contact.id);
         }
     };
 
@@ -64,8 +73,8 @@ export function JobContactsCard({ contacts, onAddContact, onUpdateContact, onDel
                 <div className="bg-slate-900 border border-slate-600 p-3 rounded-md mb-4 flex flex-col gap-2">
                     <TextInput id="c-name" label="Nome" placeholder="Nome" value={newContact.name} onChange={e => setNewContact({ ...newContact, name: e.target.value })} />
                     <TextInput id="c-role" label="Cargo" placeholder="Ex: Tech Recruiter" value={newContact.role} onChange={e => setNewContact({ ...newContact, role: e.target.value })} />
-                    <TextInput id="c-linkedin" label="LinkedIn" placeholder="URL (opcional)" value={newContact.linkedin} onChange={e => setNewContact({...newContact, linkedin: e.target.value})} />
-                    <TextInput id="c-phone" label="Telefone" placeholder="Número (opcional)" value={newContact.phone} onChange={e => setNewContact({...newContact, phone: e.target.value})} />
+                    <TextInput id="c-linkedin" label="LinkedIn" placeholder="URL (opcional)" value={newContact.linkedin} onChange={e => setNewContact({ ...newContact, linkedin: e.target.value })} />
+                    <TextInput id="c-phone" label="Telefone" placeholder="Número (opcional)" value={newContact.phone} onChange={e => setNewContact({ ...newContact, phone: e.target.value })} />
                     <button type="button" onClick={handleAdd} disabled={isSubmitting} className="mt-2 px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 self-end disabled:opacity-50">
                         {isSubmitting ? 'Salvando...' : 'Salvar Contato'}
                     </button>
@@ -79,8 +88,8 @@ export function JobContactsCard({ contacts, onAddContact, onUpdateContact, onDel
                             <div className="flex flex-col gap-2 w-full">
                                 <TextInput id={`ce-name-${contact.id}`} label="Nome" placeholder="Nome" value={editContact.name} onChange={e => setEditContact({ ...editContact, name: e.target.value })} />
                                 <TextInput id={`ce-role-${contact.id}`} label="Cargo" placeholder="Ex: Tech Recruiter" value={editContact.role} onChange={e => setEditContact({ ...editContact, role: e.target.value })} />
-                                <TextInput id={`ce-linkedin-${contact.id}`} label="LinkedIn" placeholder="URL (opcional)" value={editContact.linkedin} onChange={e => setEditContact({...editContact, linkedin: e.target.value})} />
-                                <TextInput id={`ce-phone-${contact.id}`} label="Telefone" placeholder="Número (opcional)" value={editContact.phone} onChange={e => setEditContact({...editContact, phone: e.target.value})} />
+                                <TextInput id={`ce-linkedin-${contact.id}`} label="LinkedIn" placeholder="URL (opcional)" value={editContact.linkedin} onChange={e => setEditContact({ ...editContact, linkedin: e.target.value })} />
+                                <TextInput id={`ce-phone-${contact.id}`} label="Telefone" placeholder="Número (opcional)" value={editContact.phone} onChange={e => setEditContact({ ...editContact, phone: e.target.value })} />
                                 <div className="flex justify-end gap-2 mt-2">
                                     <button type="button" onClick={() => setEditingContactId(null)} className="text-slate-400 hover:text-white text-sm">Cancelar</button>
                                     <button type="button" onClick={handleSaveEdit} disabled={isSubmitting} className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 disabled:opacity-50">
@@ -92,7 +101,7 @@ export function JobContactsCard({ contacts, onAddContact, onUpdateContact, onDel
                             <>
                                 <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <button type="button" onClick={() => handleStartEdit(contact)} className="text-slate-500 hover:text-blue-400 text-xs">Editar</button>
-                                    <button type="button" onClick={() => handleRemove(contact.id)} className="text-slate-500 hover:text-red-400 font-bold">&times;</button>
+                                    <button type="button" onClick={() => handleDelete(contact)} className="text-slate-500 hover:text-red-400 font-bold">&times;</button>
                                 </div>
                                 <span className="text-sm font-medium text-white">{contact.name}</span>
                                 <span className="text-xs text-slate-400">{contact.role}</span>

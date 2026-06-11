@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { TextInput } from '../form/TextInput';
 import type { LinkItem } from '../form/DynamicLinkList';
+import { useModal } from '../../contexts/ModalContext';
 
 interface JobLinksCardProps {
     links: LinkItem[];
@@ -13,6 +14,7 @@ export function JobLinksCard({ links, onAddLink, onUpdateLink, onDeleteLink }: J
     const [isAdding, setIsAdding] = useState(false);
     const [newLink, setNewLink] = useState({ title: '', url: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const modal = useModal();
     
     const [editingLinkId, setEditingLinkId] = useState<number | null>(null);
     const [editLink, setEditLink] = useState({ title: '', url: '' });
@@ -43,9 +45,16 @@ export function JobLinksCard({ links, onAddLink, onUpdateLink, onDeleteLink }: J
         setEditingLinkId(null);
     };
 
-    const handleRemove = async (id: number) => {
-        if(confirm('Deseja excluir este link?')) {
-            await onDeleteLink(id);
+    const handleDelete = async (link: LinkItem) => {
+        const isConfirmed = await modal.confirm({
+            title: 'Excluir Link',
+            message: `Tem certeza que deseja excluir o link "${link.title}"? Esta ação não pode ser desfeita.`,
+            confirmText: 'Excluir',
+            variant: 'danger'
+        });
+
+        if (isConfirmed) {
+            await onDeleteLink(link.id);
         }
     };
 
@@ -90,7 +99,7 @@ export function JobLinksCard({ links, onAddLink, onUpdateLink, onDeleteLink }: J
                                 </div>
                                 <div className="flex gap-2 items-center">
                                     <button type="button" onClick={() => handleStartEdit(link)} className="text-slate-500 hover:text-blue-400 text-xs opacity-0 group-hover:opacity-100 transition-opacity">Editar</button>
-                                    <button type="button" onClick={() => handleRemove(link.id)} className="text-slate-500 hover:text-red-400 leading-none opacity-0 group-hover:opacity-100 transition-opacity" title="Excluir">&times;</button>
+                                    <button type="button" onClick={() => handleDelete(link)} className="text-slate-500 hover:text-red-400 leading-none opacity-0 group-hover:opacity-100 transition-opacity" title="Excluir">&times;</button>
                                 </div>
                             </div>
                         )}
