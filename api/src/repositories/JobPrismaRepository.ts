@@ -144,4 +144,10 @@ export class JobPrismaRepository implements JobRepositoryInterface {
             });
         }
     }
+
+    async delete(id: number): Promise<void> {
+        await this.prismaClient.job.delete({
+            where: { id }
+        });
+    }
 }

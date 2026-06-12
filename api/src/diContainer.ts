@@ -29,6 +29,7 @@ import { RemoveJobSkill } from '@/usecases/RemoveJobSkill';
 import { AddJobContact } from '@/usecases/AddJobContact';
 import { UpdateJobContact } from '@/usecases/UpdateJobContact';
 import { DeleteJobContact } from '@/usecases/DeleteJobContact';
+import { DeleteJob } from '@/usecases/DeleteJob';
 import { AddJobLink } from '@/usecases/AddJobLink';
 import { UpdateJobLink } from '@/usecases/UpdateJobLink';
 import { DeleteJobLink } from '@/usecases/DeleteJobLink';
@@ -160,6 +161,11 @@ container.register('DeleteJobContact', {
         c.resolve('JobContactRepositoryInterface')
     )
 });
+
+container.register('DeleteJob', {
+    useFactory: (c) => new DeleteJob(c.resolve('JobRepositoryInterface'))
+});
+
 container.register('AddJobLink', {
     useFactory: (c) => new AddJobLink(
         c.resolve('JobRepositoryInterface'),
@@ -218,7 +224,8 @@ container.register('JobController', {
         c.resolve('AddJobLink'),
         c.resolve('UpdateJobLink'),
         c.resolve('DeleteJobLink'),
-        c.resolve('ChangeJobStatus')
+        c.resolve('ChangeJobStatus'),
+        c.resolve('DeleteJob')
     )
 });
 

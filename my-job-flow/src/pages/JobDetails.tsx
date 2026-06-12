@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useJobDetails } from "../hooks/useJobDetails";
+import { useModal } from "../contexts/ModalContext";
 
 import { SkillService } from "../services/SkillService";
+import { JobService } from "../services/JobService";
 import type { Skill } from "../services/SkillService";
 import { JobStatusService } from "../services/JobStatusService";
 import type { JobStatus } from "../services/JobStatusService";
@@ -19,7 +21,9 @@ import { JobLinksCard } from "../components/job/JobLinksCard";
 
 export default function JobDetails() {
     const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
     const toast = useToast();
+    const modal = useModal();
 
     const {
         job,
@@ -79,6 +83,27 @@ export default function JobDetails() {
         }
     };
 
+    const handleDeleteJob = async () => {
+        if (!job) return;
+
+        const isConfirmed = await modal.confirm({
+            title: "Excluir Vaga",
+            message: `Tem certeza que deseja excluir a vaga "${job.title}" da empresa ${job.company}? Esta ação não pode ser desfeita.`,
+            confirmText: "Excluir Vaga",
+            variant: "danger"
+        });
+
+        if (isConfirmed) {
+            try {
+                await JobService.delete(job.id);
+                toast.success("Vaga excluída com sucesso.");
+                navigate('/');
+            } catch (err: any) {
+                toast.error(`Erro ao excluir vaga: ${err.message}`);
+            }
+        }
+    };
+
     if (loading) {
         return <div className="flex items-center justify-center h-full text-slate-300">Carregando detalhes da vaga...</div>;
     }
@@ -95,6 +120,7 @@ export default function JobDetails() {
                 availableStatuses={availableStatuses}
                 onChangeStatus={changeStatus}
                 onUpdateJob={updateJob}
+                onDeleteJob={handleDeleteJob}
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl">

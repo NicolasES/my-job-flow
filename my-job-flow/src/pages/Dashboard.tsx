@@ -40,6 +40,16 @@ function Dashboard() {
         }
     };
 
+    const handleDeleteJob = async (jobId: number) => {
+        try {
+            await JobService.delete(jobId);
+            toast.success("Vaga excluída com sucesso.");
+            fetchJobs(search);
+        } catch (err: any) {
+            toast.error(err.message || "Falha ao excluir a vaga.");
+        }
+    };
+
     const availableStatuses = columns.map(c => ({ id: c.id, name: c.name }));
 
     return (
@@ -74,6 +84,7 @@ function Dashboard() {
                             jobs={column.jobs}
                             availableStatuses={availableStatuses}
                             onMoveJob={handleMoveJob}
+                            onDeleteJob={handleDeleteJob}
                         />
                     ))
                 )}

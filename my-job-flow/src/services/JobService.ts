@@ -103,6 +103,12 @@ export class JobService {
         });
     }
 
+    static async delete(id: number): Promise<void> {
+        await fetchApi(`/jobs/${id}`, {
+            method: 'DELETE'
+        });
+    }
+
     static async addSkill(jobId: number, type: 'mandatory' | 'recommended', skillId: number): Promise<void> {
         await fetchApi(`/jobs/${jobId}/skills/${type}`, {
             method: 'POST',

@@ -18,6 +18,7 @@ import { JobController } from '@/controllers/JobController';
 import { createJobSchema } from '@/request-validations/createJobSchema';
 import { getJobDetailsSchema } from '@/request-validations/getJobDetailsSchema';
 import { updateJobSchema } from '@/request-validations/updateJobSchema';
+import { deleteJobSchema } from '@/request-validations/deleteJobSchema';
 import { addJobSkillSchema } from '@/request-validations/addJobSkillSchema';
 import { removeJobSkillSchema } from '@/request-validations/removeJobSkillSchema';
 import { addJobContactSchema } from '@/request-validations/addJobContactSchema';
@@ -56,6 +57,7 @@ export default function registerRoutes({ fastify }: Application) {
     fastify.post('/jobs', createJobSchema, (req, rep) => jobController.create(req as any, rep));
     fastify.get('/jobs/:id', getJobDetailsSchema, (req, rep) => jobController.getDetails(req as any, rep));
     fastify.put('/jobs/:id', updateJobSchema, (req, rep) => jobController.update(req as any, rep));
+    fastify.delete('/jobs/:id', deleteJobSchema, (req, rep) => jobController.delete(req as any, rep));
     fastify.patch('/jobs/:id/status', changeJobStatusSchema, (req, rep) => jobController.changeStatus(req as any, rep));
 
     // Job skills
