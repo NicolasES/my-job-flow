@@ -4,6 +4,7 @@ export interface DashboardJobDto {
     company: string;
     location: string;
     date: string;
+    statusId: number;
 }
 
 export interface DashboardColumnDto {

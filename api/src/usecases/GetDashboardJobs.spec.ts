@@ -21,7 +21,7 @@ describe('GetDashboardJobs UseCase', () => {
                 name: 'Enviado',
                 order: 1,
                 jobs: [
-                    { id: 1, title: 'Job 1', company: 'Co 1', location: 'Remote', date: '15 out' }
+                    { id: 1, title: 'Job 1', company: 'Co 1', location: 'Remote', date: '15 out', statusId: 1 }
                 ]
             }
         ];

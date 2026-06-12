@@ -42,7 +42,8 @@ export class DashboardPrismaDao implements DashboardDaoInterface {
                         title: job.title,
                         company: job.company,
                         location: job.workModel,
-                        date: formattedDate
+                        date: formattedDate,
+                        statusId: job.statusId
                     };
                 });
 

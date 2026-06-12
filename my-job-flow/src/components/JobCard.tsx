@@ -6,17 +6,17 @@ export type JobCardData = {
     company: string;
     location: string;
     date: string;
-    status: string;
+    statusId: number;
 }
 
 export interface JobCardProps {
     jobData: JobCardData;
-    availableStatuses: string[];
-    onMoveJob: (id: number, newStatus: string) => void;
+    availableStatuses: { id: number; name: string; }[];
+    onMoveJob: (id: number, newStatusId: number) => void;
 }
 
 export function JobCard({ jobData, availableStatuses, onMoveJob }: JobCardProps) {
-    const { id, title, company, location, date, status } = jobData;
+    const { id, title, company, location, date, statusId } = jobData;
     const navigate = useNavigate();
 
     return (
@@ -32,13 +32,13 @@ export function JobCard({ jobData, availableStatuses, onMoveJob }: JobCardProps)
                 {onMoveJob && (
                     <select
                         className="bg-slate-900 text-xs text-slate-300 border border-slate-600 rounded p-1 focus:outline-none cursor-pointer"
-                        value={status}
-                        onChange={(e) => onMoveJob(id, e.target.value)}
+                        value={statusId}
+                        onChange={(e) => onMoveJob(id, Number(e.target.value))}
                         onClick={(e) => e.stopPropagation()}
                         title="Mover para outra coluna"
                     >
                         {availableStatuses.map(s => (
-                            <option key={s} value={s}>{s}</option>
+                            <option key={s.id} value={s.id}>{s.name}</option>
                         ))}
                     </select>
                 )}

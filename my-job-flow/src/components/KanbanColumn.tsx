@@ -3,8 +3,8 @@ import { JobCard, type JobCardData } from "./JobCard";
 interface KanbanColumnProps {
     title: string;
     jobs: JobCardData[];
-    availableStatuses: string[];
-    onMoveJob: (id: number, newStatus: string) => void;
+    availableStatuses: { id: number; name: string; }[];
+    onMoveJob: (id: number, newStatusId: number) => void;
 }
 
 export function KanbanColumn({ title, jobs, availableStatuses, onMoveJob }: KanbanColumnProps) {

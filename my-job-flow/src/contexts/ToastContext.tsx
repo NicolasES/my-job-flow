@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 
 type ToastType = 'success' | 'error' | 'info';
 
@@ -32,8 +32,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     const error = useCallback((message: string) => addToast(message, 'error'), [addToast]);
     const info = useCallback((message: string) => addToast(message, 'info'), [addToast]);
 
+    const contextValue = useMemo(() => ({ success, error, info }), [success, error, info]);
+
     return (
-        <ToastContext.Provider value={{ success, error, info }}>
+        <ToastContext.Provider value={contextValue}>
             {children}
             <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
                 {toasts.map((toast) => (
