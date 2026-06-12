@@ -3,6 +3,7 @@ import { TextInput } from "../form/TextInput";
 import { JobStatusService, type JobStatus } from "../../services/JobStatusService";
 import { useToast } from "../../contexts/ToastContext";
 import { useModal } from "../../contexts/ModalContext";
+import { getErrorMessage } from "../../utils/errorMessages";
 
 export function JobStatusConfig() {
     const [statuses, setStatuses] = useState<JobStatus[]>([]);
@@ -18,7 +19,7 @@ export function JobStatusConfig() {
                 const data = await JobStatusService.findAll();
                 setStatuses(data.sort((a, b) => a.order - b.order));
             } catch (err: any) {
-                toast.error(`Erro ao carregar status: ${err.message}`);
+                toast.error(getErrorMessage(err));
             }
         };
         loadStatuses();
@@ -33,7 +34,7 @@ export function JobStatusConfig() {
             setNewStatusName("");
             toast.success("Status criado com sucesso.");
         } catch (err: any) {
-            toast.error(`Erro ao criar status: ${err.message}`);
+            toast.error(getErrorMessage(err));
         }
     };
 
@@ -52,7 +53,16 @@ export function JobStatusConfig() {
             setStatuses(statuses.filter(status => status.id !== idToRemove));
             toast.success("Status removido.");
         } catch (err: any) {
-            toast.error(`Erro ao deletar status: ${err.message}`);
+            if (err.code === "STATUS_HAS_LINKED_JOBS") {
+                await modal.confirm({
+                    title: "Ação não permitida",
+                    message: getErrorMessage(err),
+                    confirmText: "Entendi",
+                    hideCancel: true
+                });
+            } else {
+                toast.error(getErrorMessage(err));
+            }
         }
     };
 
@@ -64,7 +74,7 @@ export function JobStatusConfig() {
             setEditingStatusId(null);
             toast.success("Status atualizado.");
         } catch (err: any) {
-            toast.error(`Erro ao atualizar status: ${err.message}`);
+            toast.error(getErrorMessage(err));
         }
     };
 
@@ -88,7 +98,7 @@ export function JobStatusConfig() {
             const payload = newStatuses.map(s => ({ id: s.id, order: s.order }));
             await JobStatusService.reorder(payload);
         } catch (err: any) {
-            toast.error(`Erro ao reordenar status: ${err.message}`);
+            toast.error(getErrorMessage(err));
         }
     };
 

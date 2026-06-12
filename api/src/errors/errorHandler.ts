@@ -20,7 +20,8 @@ export function globalErrorHandler(error: FastifyError, request: FastifyRequest,
         return reply.status(422).send({
             statusCode: 422,
             error: error.name || 'Unprocessable Entity',
-            message: error.message
+            message: error.message,
+            code: error.code
         });
     }
 

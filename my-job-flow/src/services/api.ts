@@ -1,5 +1,17 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3333';
 
+export class ApiError extends Error {
+    public code?: string;
+    public status?: number;
+
+    constructor(message: string, code?: string, status?: number) {
+        super(message);
+        this.name = 'ApiError';
+        this.code = code;
+        this.status = status;
+    }
+}
+
 export async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const url = `${API_URL}${endpoint}`;
     
@@ -18,7 +30,11 @@ export async function fetchApi<T>(endpoint: string, options?: RequestInit): Prom
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.message || `Erro na API: ${response.status}`);
+        throw new ApiError(
+            errorData?.message || `Erro na API: ${response.status}`,
+            errorData?.code,
+            response.status
+        );
     }
 
     return response.json();

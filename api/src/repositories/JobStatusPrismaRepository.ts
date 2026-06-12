@@ -1,6 +1,7 @@
 import type { JobStatusRepositoryInterface } from '@/repositories/interfaces/JobStatusRepositoryInterface';
 import { JobStatus } from '@/entities/JobStatus';
 import { prisma } from '@/repositories/prisma';
+import { DomainError } from '@/errors/DomainError';
 
 export class JobStatusPrismaRepository implements JobStatusRepositoryInterface {
     constructor(private prismaClient: typeof prisma) { }
@@ -88,8 +89,15 @@ export class JobStatusPrismaRepository implements JobStatusRepositoryInterface {
     }
 
     async delete(id: number): Promise<void> {
-        await this.prismaClient.jobStatus.delete({
-            where: { id }
-        });
+        try {
+            await this.prismaClient.jobStatus.delete({
+                where: { id }
+            });
+        } catch (error: any) {
+            if (error.code === 'P2003') {
+                throw new DomainError('Cannot delete a job status that has associated jobs.', 'STATUS_HAS_LINKED_JOBS');
+            }
+            throw error;
+        }
     }
 }

@@ -1,4 +1,5 @@
 import type { JobStatusRepositoryInterface } from "@/repositories/interfaces/JobStatusRepositoryInterface";
+import { DomainError } from "@/errors/DomainError";
 
 export class DeleteJobStatus {
     constructor(
@@ -9,7 +10,7 @@ export class DeleteJobStatus {
         const jobStatus = await this.statusRepository.findById(id);
 
         if (!jobStatus) {
-            throw new Error('JobStatus não encontrado');
+            throw new DomainError('Job status not found', 'JOB_STATUS_NOT_FOUND');
         }
 
         await this.statusRepository.delete(id);

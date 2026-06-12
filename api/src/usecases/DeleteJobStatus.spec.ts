@@ -33,7 +33,7 @@ describe('DeleteJobStatus UseCase', () => {
     it('should throw an error if the JobStatus does not exist', async () => {
         mockJobStatusRepository.findById.mockResolvedValue(null);
 
-        await expect(deleteJobStatus.execute(999)).rejects.toThrow('JobStatus não encontrado');
+        await expect(deleteJobStatus.execute(999)).rejects.toThrow('Job status not found');
 
         expect(mockJobStatusRepository.findById).toHaveBeenCalledWith(999);
         expect(mockJobStatusRepository.delete).not.toHaveBeenCalled();

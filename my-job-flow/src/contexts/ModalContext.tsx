@@ -6,6 +6,7 @@ interface ConfirmOptions {
     confirmText?: string;
     cancelText?: string;
     variant?: 'danger' | 'primary';
+    hideCancel?: boolean;
 }
 
 interface ModalContextData {
@@ -21,7 +22,8 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         message: '',
         confirmText: 'Confirmar',
         cancelText: 'Cancelar',
-        variant: 'primary'
+        variant: 'primary',
+        hideCancel: false
     });
 
     const resolver = useRef<((value: boolean) => void) | null>(null);
@@ -32,7 +34,8 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
             message: opts.message,
             confirmText: opts.confirmText || 'Confirmar',
             cancelText: opts.cancelText || 'Cancelar',
-            variant: opts.variant || 'primary'
+            variant: opts.variant || 'primary',
+            hideCancel: opts.hideCancel || false
         });
         setIsOpen(true);
 
@@ -82,12 +85,14 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
                         <p className="text-slate-300 mb-8">{options.message}</p>
                         
                         <div className="flex justify-end gap-3">
-                            <button
-                                onClick={handleCancel}
-                                className="px-4 py-2 text-sm font-medium text-slate-300 bg-transparent border border-slate-700 rounded-md hover:bg-slate-800 transition-colors"
-                            >
-                                {options.cancelText}
-                            </button>
+                            {!options.hideCancel && (
+                                <button
+                                    onClick={handleCancel}
+                                    className="px-4 py-2 text-sm font-medium text-slate-300 bg-transparent border border-slate-700 rounded-md hover:bg-slate-800 transition-colors"
+                                >
+                                    {options.cancelText}
+                                </button>
+                            )}
                             <button
                                 onClick={handleConfirm}
                                 className={`px-4 py-2 text-sm font-medium text-white rounded-md transition-colors ${
