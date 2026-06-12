@@ -1,7 +1,0 @@
--- CreateTable
-CREATE TABLE "job_statuses" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "name" TEXT NOT NULL,
-    "order" INTEGER NOT NULL,
-    "createAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-);

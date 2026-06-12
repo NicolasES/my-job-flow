@@ -1,4 +1,19 @@
 -- CreateTable
+CREATE TABLE "job_statuses" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "order" INTEGER NOT NULL,
+    "createAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- CreateTable
+CREATE TABLE "skills" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "createAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- CreateTable
 CREATE TABLE "jobs" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "title" TEXT NOT NULL,
@@ -8,6 +23,7 @@ CREATE TABLE "jobs" (
     "description" TEXT NOT NULL,
     "appliedAt" DATETIME NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "isArchived" BOOLEAN NOT NULL DEFAULT false,
     "statusId" INTEGER NOT NULL,
     CONSTRAINT "jobs_statusId_fkey" FOREIGN KEY ("statusId") REFERENCES "job_statuses" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -25,7 +41,7 @@ CREATE TABLE "job_comments" (
 CREATE TABLE "job_contacts" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
-    "role" TEXT NOT NULL,
+    "role" TEXT,
     "linkedin" TEXT,
     "phone" TEXT,
     "jobId" INTEGER NOT NULL,
@@ -56,6 +72,9 @@ CREATE TABLE "_RecommendedSkills" (
     CONSTRAINT "_RecommendedSkills_A_fkey" FOREIGN KEY ("A") REFERENCES "jobs" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "_RecommendedSkills_B_fkey" FOREIGN KEY ("B") REFERENCES "skills" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "skills_name_key" ON "skills"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_MandatorySkills_AB_unique" ON "_MandatorySkills"("A", "B");
