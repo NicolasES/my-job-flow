@@ -25,6 +25,10 @@ import type { DeleteJobLinkRequest } from "@/request-validations/deleteJobLinkSc
 import type { ChangeJobStatus } from "@/usecases/ChangeJobStatus";
 import type { ChangeJobStatusRequest } from "@/request-validations/changeJobStatusSchema";
 import type { DeleteJob } from "@/usecases/DeleteJob";
+import type { ToggleArchiveJob } from "@/usecases/ToggleArchiveJob";
+import type { ToggleJobArchiveRequest } from "@/request-validations/toggleJobArchiveSchema";
+import type { GetArchivedJobs } from "@/usecases/GetArchivedJobs";
+import type { GetArchivedJobsRequest } from "@/request-validations/getArchivedJobsSchema";
 
 export class JobController {
     constructor(
@@ -40,7 +44,9 @@ export class JobController {
         private readonly updateJobLinkUseCase: UpdateJobLink,
         private readonly deleteJobLinkUseCase: DeleteJobLink,
         private readonly changeJobStatusUseCase: ChangeJobStatus,
-        private readonly deleteJobUseCase: DeleteJob
+        private readonly deleteJobUseCase: DeleteJob,
+        private readonly toggleArchiveJobUseCase: ToggleArchiveJob,
+        private readonly getArchivedJobsUseCase: GetArchivedJobs
     ) { }
 
     async create(request: CreateJobRequest, reply: FastifyReply) {
@@ -66,6 +72,19 @@ export class JobController {
         const { id } = request.params;
         await this.deleteJobUseCase.execute(id);
         return reply.status(200).send({ success: true });
+    }
+
+    async toggleArchive(request: ToggleJobArchiveRequest, reply: FastifyReply) {
+        const { id } = request.params;
+        const { isArchived } = request.body;
+        await this.toggleArchiveJobUseCase.execute(id, isArchived);
+        return reply.status(200).send({ success: true });
+    }
+
+    async getArchived(request: GetArchivedJobsRequest, reply: FastifyReply) {
+        const { q } = request.query;
+        const output = await this.getArchivedJobsUseCase.execute(q);
+        return reply.status(200).send(output);
     }
 
     async changeStatus(request: ChangeJobStatusRequest, reply: FastifyReply) {

@@ -33,6 +33,7 @@ export class JobDetailsPrismaDao implements JobDetailsDaoInterface {
             description: job.description,
             appliedAt: job.appliedAt,
             createdAt: job.createdAt,
+            isArchived: job.isArchived,
             status: {
                 id: job.status.id,
                 name: job.status.name,

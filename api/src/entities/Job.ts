@@ -12,6 +12,7 @@ export type JobProps = {
     description: string;
     appliedAt: Date;
     createdAt?: Date;
+    isArchived?: boolean;
 
     status: JobStatus;
 }
@@ -25,6 +26,7 @@ export class Job {
     private description: string;
     private appliedAt: Date;
     private createdAt: Date;
+    private isArchived: boolean;
 
     private status: JobStatus;
 
@@ -34,6 +36,7 @@ export class Job {
         this.description = props.description.trim();
         this.appliedAt = props.appliedAt;
         this.createdAt = props.createdAt ?? new Date();
+        this.isArchived = props.isArchived ?? false;
         this.status = props.status;
 
         this.setTitle(props.title);
@@ -102,4 +105,8 @@ export class Job {
         return this.status;
     }
     public setStatus(status: JobStatus): void { this.status = status; }
+
+    public getIsArchived(): boolean { return this.isArchived; }
+    public archive(): void { this.isArchived = true; }
+    public unarchive(): void { this.isArchived = false; }
 }

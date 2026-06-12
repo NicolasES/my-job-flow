@@ -18,6 +18,7 @@ export class JobPrismaRepository implements JobRepositoryInterface {
                 description: job.getDescription(),
                 appliedAt: job.getAppliedAt(),
                 createdAt: job.getCreatedAt(),
+                isArchived: job.getIsArchived(),
                 statusId: job.getStatus().getId()!,
             },
             include: {
@@ -34,6 +35,7 @@ export class JobPrismaRepository implements JobRepositoryInterface {
             description: created.description,
             appliedAt: created.appliedAt,
             createdAt: created.createdAt,
+            isArchived: created.isArchived,
             status: new JobStatus({
                 id: created.status.id,
                 name: created.status.name,
@@ -59,6 +61,7 @@ export class JobPrismaRepository implements JobRepositoryInterface {
             description: found.description,
             appliedAt: found.appliedAt,
             createdAt: found.createdAt,
+            isArchived: found.isArchived,
             status: new JobStatus({
                 id: found.status.id,
                 name: found.status.name,
@@ -77,6 +80,7 @@ export class JobPrismaRepository implements JobRepositoryInterface {
                 salary: job.getSalary(),
                 description: job.getDescription(),
                 appliedAt: job.getAppliedAt(),
+                isArchived: job.getIsArchived(),
                 statusId: job.getStatus().getId()!,
             },
             include: {
@@ -93,6 +97,7 @@ export class JobPrismaRepository implements JobRepositoryInterface {
             description: updated.description,
             appliedAt: updated.appliedAt,
             createdAt: updated.createdAt,
+            isArchived: updated.isArchived,
             status: new JobStatus({
                 id: updated.status.id,
                 name: updated.status.name,

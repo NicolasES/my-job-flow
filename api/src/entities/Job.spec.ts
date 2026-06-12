@@ -78,7 +78,7 @@ describe('Job Entity', () => {
         expect(job.getStatus()).toBe(mockStatus);
 
         const newStatus = new JobStatus({ id: 2, name: 'Entrevista', order: 1 });
-        
+
         job.setSalary(6000);
         job.setDescription('Nova descricão');
         job.setAppliedAt(new Date('2023-10-16'));
@@ -163,5 +163,24 @@ describe('Job Entity', () => {
         });
 
         expect(() => job.setWorkModel('alien' as any)).toThrow("Invalid work model. Must be 'remote', 'hybrid' or 'onsite'");
+    });
+
+    it('should correctly manage isArchived status', () => {
+        const job = new Job({
+            title: 'Frontend Dev',
+            company: 'Tech Corp',
+            workModel: 'remote',
+            description: '',
+            appliedAt: new Date(),
+            status: mockStatus
+        });
+
+        expect(job.getIsArchived()).toBe(false);
+
+        job.archive();
+        expect(job.getIsArchived()).toBe(true);
+
+        job.unarchive();
+        expect(job.getIsArchived()).toBe(false);
     });
 });

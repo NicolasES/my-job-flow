@@ -7,6 +7,7 @@ export type JobDetailsDto = {
     description: string;
     appliedAt: Date;
     createdAt: Date;
+    isArchived: boolean;
     status: {
         id: number;
         name: string;

@@ -30,6 +30,7 @@ import { AddJobContact } from '@/usecases/AddJobContact';
 import { UpdateJobContact } from '@/usecases/UpdateJobContact';
 import { DeleteJobContact } from '@/usecases/DeleteJobContact';
 import { DeleteJob } from '@/usecases/DeleteJob';
+import { ToggleArchiveJob } from '@/usecases/ToggleArchiveJob';
 import { AddJobLink } from '@/usecases/AddJobLink';
 import { UpdateJobLink } from '@/usecases/UpdateJobLink';
 import { DeleteJobLink } from '@/usecases/DeleteJobLink';
@@ -44,6 +45,8 @@ import { JobDetailsPrismaDao } from '@/daos/JobDetailsPrismaDao';
 import { DashboardPrismaDao } from '@/daos/DashboardPrismaDao';
 import { GetDashboardJobs } from '@/usecases/GetDashboardJobs';
 import { DashboardController } from '@/controllers/DashboardController';
+import { ArchivedJobsPrismaDao } from '@/daos/ArchivedJobsPrismaDao';
+import { GetArchivedJobs } from '@/usecases/GetArchivedJobs';
 
 // 1. Prisma Client Singleton
 container.registerInstance('PrismaClient', prisma);
@@ -75,6 +78,9 @@ container.register('JobLinkRepositoryInterface', {
 });
 container.register('JobCommentRepositoryInterface', {
     useValue: new JobCommentPrismaRepository(prisma)
+});
+container.register('ArchivedJobsDaoInterface', {
+    useValue: new ArchivedJobsPrismaDao(prisma)
 });
 
 // 3. Use Cases
@@ -165,6 +171,9 @@ container.register('DeleteJobContact', {
 container.register('DeleteJob', {
     useFactory: (c) => new DeleteJob(c.resolve('JobRepositoryInterface'))
 });
+container.register('ToggleArchiveJob', {
+    useFactory: (c) => new ToggleArchiveJob(c.resolve('JobRepositoryInterface'))
+});
 
 container.register('AddJobLink', {
     useFactory: (c) => new AddJobLink(
@@ -199,6 +208,9 @@ container.register('DeleteJobComment', {
 container.register('GetDashboardJobs', {
     useFactory: (c) => new GetDashboardJobs(c.resolve('DashboardDaoInterface'))
 });
+container.register('GetArchivedJobs', {
+    useFactory: (c) => new GetArchivedJobs(c.resolve('ArchivedJobsDaoInterface'))
+});
 
 // 4. Controllers
 container.register('JobStatusController', {
@@ -225,7 +237,9 @@ container.register('JobController', {
         c.resolve('UpdateJobLink'),
         c.resolve('DeleteJobLink'),
         c.resolve('ChangeJobStatus'),
-        c.resolve('DeleteJob')
+        c.resolve('DeleteJob'),
+        c.resolve('ToggleArchiveJob'),
+        c.resolve('GetArchivedJobs')
     )
 });
 

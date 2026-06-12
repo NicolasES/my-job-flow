@@ -19,6 +19,8 @@ import { createJobSchema } from '@/request-validations/createJobSchema';
 import { getJobDetailsSchema } from '@/request-validations/getJobDetailsSchema';
 import { updateJobSchema } from '@/request-validations/updateJobSchema';
 import { deleteJobSchema } from '@/request-validations/deleteJobSchema';
+import { toggleJobArchiveSchema } from '@/request-validations/toggleJobArchiveSchema';
+import { getArchivedJobsSchema } from '@/request-validations/getArchivedJobsSchema';
 import { addJobSkillSchema } from '@/request-validations/addJobSkillSchema';
 import { removeJobSkillSchema } from '@/request-validations/removeJobSkillSchema';
 import { addJobContactSchema } from '@/request-validations/addJobContactSchema';
@@ -58,7 +60,9 @@ export default function registerRoutes({ fastify }: Application) {
     fastify.get('/jobs/:id', getJobDetailsSchema, (req, rep) => jobController.getDetails(req as any, rep));
     fastify.put('/jobs/:id', updateJobSchema, (req, rep) => jobController.update(req as any, rep));
     fastify.delete('/jobs/:id', deleteJobSchema, (req, rep) => jobController.delete(req as any, rep));
+    fastify.patch('/jobs/:id/archive', toggleJobArchiveSchema, (req, rep) => jobController.toggleArchive(req as any, rep));
     fastify.patch('/jobs/:id/status', changeJobStatusSchema, (req, rep) => jobController.changeStatus(req as any, rep));
+    fastify.get('/jobs/archived', getArchivedJobsSchema, (req, rep) => jobController.getArchived(req as any, rep));
 
     // Job skills
     fastify.post('/jobs/:id/skills/:type', addJobSkillSchema, (req, rep) => jobController.addSkill(req as any, rep));

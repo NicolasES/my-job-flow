@@ -19,8 +19,11 @@ export class DashboardPrismaDao implements DashboardDaoInterface {
                 { description: { contains: filterText } },
                 { mandatorySkills: { some: { name: { contains: filterText } } } },
                 { recommendedSkills: { some: { name: { contains: filterText } } } }
-            ]
-        } : {};
+            ],
+            isArchived: false
+        } : {
+            isArchived: false
+        };
 
         const jobs = await this.prismaClient.job.findMany({
             where: whereClause,

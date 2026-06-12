@@ -43,6 +43,7 @@ model Job {
   description String
   appliedAt   DateTime
   createdAt   DateTime @default(now())
+  isArchived  Boolean  @default(false)
 
   statusId Int
   status   JobStatus @relation(fields: [statusId], references: [id])
