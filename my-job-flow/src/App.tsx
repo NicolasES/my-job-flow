@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard"
 import NewJob from "./pages/NewJob"
 import Configurations from "./pages/Configurations"
 import JobDetails from "./pages/JobDetails"
+import ArchivedJobs from "./pages/ArchivedJobs"
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
       {
         path: 'configurations',
         element: <Configurations />
+      },
+      {
+        path: 'archived',
+        element: <ArchivedJobs />
       },
       {
         path: 'job/:id',

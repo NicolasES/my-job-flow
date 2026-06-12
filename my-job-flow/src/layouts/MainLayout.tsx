@@ -37,6 +37,17 @@ function MainLayout() {
                         >
                             Configurações
                         </NavLink>
+
+                        <NavLink
+                            to="/archived"
+                            className={({ isActive }) =>
+                                isActive
+                                    ? "text-white border-b-2 border-blue-500 pb-1"
+                                    : "hover:text-white transition-colors pb-1"
+                            }
+                        >
+                            Vagas Arquivadas
+                        </NavLink>
                     </nav>
                 </div>
 

@@ -117,6 +117,11 @@ export class JobService {
         });
     }
 
+    static async getArchived(filterText?: string): Promise<any[]> {
+        const query = filterText ? `?q=${encodeURIComponent(filterText)}` : '';
+        return fetchApi(`/jobs/archived${query}`);
+    }
+
     static async addSkill(jobId: number, type: 'mandatory' | 'recommended', skillId: number): Promise<void> {
         await fetchApi(`/jobs/${jobId}/skills/${type}`, {
             method: 'POST',
