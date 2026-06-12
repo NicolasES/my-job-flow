@@ -14,6 +14,7 @@ import type { LinkItem } from "../components/form/DynamicLinkList"
 import { JobService, WORK_MODEL_OPTIONS } from "../services/JobService";
 import { SkillService } from '../services/SkillService'
 import type { Skill } from '../services/SkillService'
+import { useToast } from "../contexts/ToastContext";
 
 export default function NewJob() {
     const [availableSkills, setAvailableSkills] = useState<Skill[]>([])
@@ -24,7 +25,7 @@ export default function NewJob() {
     const [links, setLinks] = useState<LinkItem[]>([])
 
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const [successMsg, setSuccessMsg] = useState("")
+    const toast = useToast();
 
     useEffect(() => {
         SkillService.findAll()
@@ -61,7 +62,6 @@ export default function NewJob() {
     const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsSubmitting(true);
-        setSuccessMsg("");
 
         const formData = new FormData(e.currentTarget);
 
@@ -81,9 +81,9 @@ export default function NewJob() {
 
         try {
             await JobService.create(data);
-            setSuccessMsg("Vaga criada com sucesso!");
+            toast.success("Vaga criada com sucesso!");
         } catch (err: any) {
-            alert(`Erro ao criar vaga: ${err.message}`);
+            toast.error(`Erro ao criar vaga: ${err.message}`);
         } finally {
             setIsSubmitting(false);
         }
@@ -96,7 +96,6 @@ export default function NewJob() {
             <div className="mb-8">
                 <h1 className="text-3xl font-semibold text-white">Cadastrar Nova Vaga</h1>
                 <p className="text-slate-400 mt-1">Registre as informações de uma nova candidatura</p>
-                {successMsg && <p className="text-green-400 mt-4 font-medium">{successMsg}</p>}
             </div>
 
             <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl">

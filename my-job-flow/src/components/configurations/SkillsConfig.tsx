@@ -2,10 +2,14 @@ import { useState, useEffect } from "react";
 import { TextInput } from "../form/TextInput";
 import { SkillTag } from "../form/SkillTag";
 import { SkillService, type Skill } from "../../services/SkillService";
+import { useToast } from "../../contexts/ToastContext";
+import { useModal } from "../../contexts/ModalContext";
 
 export function SkillsConfig() {
     const [skills, setSkills] = useState<Skill[]>([]);
     const [newSkillName, setNewSkillName] = useState("");
+    const toast = useToast();
+    const modal = useModal();
 
     useEffect(() => {
         const loadSkills = async () => {
@@ -13,7 +17,7 @@ export function SkillsConfig() {
                 const data = await SkillService.findAll();
                 setSkills(data);
             } catch (err: any) {
-                alert(`Erro ao carregar skills: ${err.message}`);
+                toast.error(`Erro ao carregar skills: ${err.message}`);
             }
         };
         loadSkills();
@@ -24,7 +28,7 @@ export function SkillsConfig() {
         if (!name) return;
 
         if (skills.some(s => s.name.toLowerCase() === name.toLowerCase())) {
-            alert('Esta competência já está cadastrada na lista.');
+            toast.info('Esta competência já está cadastrada na lista.');
             return;
         }
 
@@ -32,17 +36,28 @@ export function SkillsConfig() {
             const newSkill = await SkillService.create(name);
             setSkills([...skills, newSkill]);
             setNewSkillName("");
+            toast.success("Competência adicionada.");
         } catch (err: any) {
-            alert(`Erro ao adicionar skill: ${err.message}`);
+            toast.error(`Erro ao adicionar skill: ${err.message}`);
         }
     };
 
     const handleRemoveSkill = async (idToRemove: number) => {
+        const isConfirmed = await modal.confirm({
+            title: "Remover Competência",
+            message: "Tem certeza que deseja remover esta competência? Isso a removerá de todas as vagas.",
+            confirmText: "Remover",
+            variant: "danger"
+        });
+
+        if (!isConfirmed) return;
+
         try {
             await SkillService.delete(idToRemove);
             setSkills(skills.filter(skill => skill.id !== idToRemove));
+            toast.success("Competência removida.");
         } catch (err: any) {
-            alert(`Erro ao deletar skill: ${err.message}`);
+            toast.error(`Erro ao deletar skill: ${err.message}`);
         }
     };
 

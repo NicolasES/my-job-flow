@@ -1,12 +1,16 @@
 import { useState, useEffect } from "react";
 import { TextInput } from "../form/TextInput";
 import { JobStatusService, type JobStatus } from "../../services/JobStatusService";
+import { useToast } from "../../contexts/ToastContext";
+import { useModal } from "../../contexts/ModalContext";
 
 export function JobStatusConfig() {
     const [statuses, setStatuses] = useState<JobStatus[]>([]);
     const [newStatusName, setNewStatusName] = useState("");
     const [editingStatusId, setEditingStatusId] = useState<number | null>(null);
     const [editingStatusText, setEditingStatusText] = useState("");
+    const toast = useToast();
+    const modal = useModal();
 
     useEffect(() => {
         const loadStatuses = async () => {
@@ -14,7 +18,7 @@ export function JobStatusConfig() {
                 const data = await JobStatusService.findAll();
                 setStatuses(data.sort((a, b) => a.order - b.order));
             } catch (err: any) {
-                alert(`Erro ao carregar status: ${err.message}`);
+                toast.error(`Erro ao carregar status: ${err.message}`);
             }
         };
         loadStatuses();
@@ -27,17 +31,28 @@ export function JobStatusConfig() {
             const newStatus = await JobStatusService.create(newStatusName, nextOrder);
             setStatuses([...statuses, newStatus]);
             setNewStatusName("");
+            toast.success("Status criado com sucesso.");
         } catch (err: any) {
-            alert(`Erro ao criar status: ${err.message}`);
+            toast.error(`Erro ao criar status: ${err.message}`);
         }
     };
 
     const handleRemoveStatus = async (idToRemove: number) => {
+        const isConfirmed = await modal.confirm({
+            title: "Remover Status",
+            message: "Tem certeza que deseja remover este status? Vagas atreladas a ele podem ficar sem status.",
+            confirmText: "Remover",
+            variant: "danger"
+        });
+
+        if (!isConfirmed) return;
+
         try {
             await JobStatusService.delete(idToRemove);
             setStatuses(statuses.filter(status => status.id !== idToRemove));
+            toast.success("Status removido.");
         } catch (err: any) {
-            alert(`Erro ao deletar status: ${err.message}`);
+            toast.error(`Erro ao deletar status: ${err.message}`);
         }
     };
 
@@ -47,8 +62,9 @@ export function JobStatusConfig() {
             const updated = await JobStatusService.update(editingStatusId, editingStatusText);
             setStatuses(statuses.map(s => s.id === editingStatusId ? updated : s));
             setEditingStatusId(null);
+            toast.success("Status atualizado.");
         } catch (err: any) {
-            alert(`Erro ao atualizar status: ${err.message}`);
+            toast.error(`Erro ao atualizar status: ${err.message}`);
         }
     };
 
@@ -72,7 +88,7 @@ export function JobStatusConfig() {
             const payload = newStatuses.map(s => ({ id: s.id, order: s.order }));
             await JobStatusService.reorder(payload);
         } catch (err: any) {
-            alert(`Erro ao reordenar status: ${err.message}`);
+            toast.error(`Erro ao reordenar status: ${err.message}`);
         }
     };
 
