@@ -28,17 +28,6 @@ function MainLayout() {
                         </NavLink>
 
                         <NavLink
-                            to="/configurations"
-                            className={({ isActive }) =>
-                                isActive
-                                    ? "text-white border-b-2 border-blue-500 pb-1"
-                                    : "hover:text-white transition-colors pb-1"
-                            }
-                        >
-                            Configurações
-                        </NavLink>
-
-                        <NavLink
                             to="/archived"
                             className={({ isActive }) =>
                                 isActive
@@ -47,6 +36,17 @@ function MainLayout() {
                             }
                         >
                             Vagas Arquivadas
+                        </NavLink>
+
+                        <NavLink
+                            to="/configurations"
+                            className={({ isActive }) =>
+                                isActive
+                                    ? "text-white border-b-2 border-blue-500 pb-1"
+                                    : "hover:text-white transition-colors pb-1"
+                            }
+                        >
+                            Configurações
                         </NavLink>
                     </nav>
                 </div>
