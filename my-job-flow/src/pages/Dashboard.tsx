@@ -50,6 +50,16 @@ function Dashboard() {
         }
     };
 
+    const handleToggleArchiveJob = async (jobId: number, isArchived: boolean) => {
+        try {
+            await JobService.toggleArchive(jobId, isArchived);
+            toast.success(isArchived ? "Vaga arquivada com sucesso." : "Vaga desarquivada com sucesso.");
+            fetchJobs(search); // will refresh and the archived job will disappear from dashboard
+        } catch (err: any) {
+            toast.error(err.message || "Falha ao arquivar a vaga.");
+        }
+    };
+
     const availableStatuses = columns.map(c => ({ id: c.id, name: c.name }));
 
     return (
@@ -85,6 +95,7 @@ function Dashboard() {
                             availableStatuses={availableStatuses}
                             onMoveJob={handleMoveJob}
                             onDeleteJob={handleDeleteJob}
+                            onToggleArchiveJob={handleToggleArchiveJob}
                         />
                     ))
                 )}

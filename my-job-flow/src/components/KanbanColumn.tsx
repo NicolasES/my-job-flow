@@ -6,9 +6,10 @@ interface KanbanColumnProps {
     availableStatuses: { id: number; name: string; }[];
     onMoveJob: (id: number, newStatusId: number) => void;
     onDeleteJob?: (id: number) => void;
+    onToggleArchiveJob?: (id: number, currentIsArchived: boolean) => void;
 }
 
-export function KanbanColumn({ title, jobs, availableStatuses, onMoveJob, onDeleteJob }: KanbanColumnProps) {
+export function KanbanColumn({ title, jobs, availableStatuses, onMoveJob, onDeleteJob, onToggleArchiveJob }: KanbanColumnProps) {
     return (
         <div className="min-w-[320px] max-w-[320px] flex flex-col gap-4 h-full">
             <div className="flex items-center justify-between">
@@ -25,6 +26,7 @@ export function KanbanColumn({ title, jobs, availableStatuses, onMoveJob, onDele
                         availableStatuses={availableStatuses}
                         onMoveJob={onMoveJob}
                         onDeleteJob={onDeleteJob}
+                        onToggleArchiveJob={onToggleArchiveJob}
                     />
                 ))}
 

@@ -44,7 +44,8 @@ export default function JobDetails() {
         deleteContact,
         addLink,
         updateLink,
-        deleteLink
+        deleteLink,
+        toggleArchiveJob
     } = useJobDetails(id);
 
     const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
@@ -121,6 +122,7 @@ export default function JobDetails() {
                 onChangeStatus={changeStatus}
                 onUpdateJob={updateJob}
                 onDeleteJob={handleDeleteJob}
+                onToggleArchiveJob={toggleArchiveJob}
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl">

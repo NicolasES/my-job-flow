@@ -9,9 +9,10 @@ interface JobHeaderProps {
     onChangeStatus: (status: JobStatus) => void;
     onUpdateJob: (updater: (prev: JobDetailsOutput) => JobDetailsOutput) => void;
     onDeleteJob: () => void;
+    onToggleArchiveJob: (isArchived: boolean) => void;
 }
 
-export function JobHeader({ job, availableStatuses, onChangeStatus, onUpdateJob, onDeleteJob }: JobHeaderProps) {
+export function JobHeader({ job, availableStatuses, onChangeStatus, onUpdateJob, onDeleteJob, onToggleArchiveJob }: JobHeaderProps) {
     const [isEditingStatus, setIsEditingStatus] = useState(false);
     const [isEditingTitle, setIsEditingTitle] = useState(false);
     const [editTitle, setEditTitle] = useState("");
@@ -39,8 +40,18 @@ export function JobHeader({ job, availableStatuses, onChangeStatus, onUpdateJob,
                         <button onClick={handleSaveTitle} className="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Salvar</button>
                     </div>
                 ) : (
-                    <div className="flex items-center gap-2 group">
+                    <div className="flex items-center gap-3 group flex-wrap">
                         <h1 className="text-3xl font-semibold text-white">{job.title}</h1>
+                        {job.isArchived && (
+                            <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 uppercase tracking-wide">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M21 8v13H3V8"></path>
+                                    <path d="M1 3h22v5H1z"></path>
+                                    <path d="M10 12h4"></path>
+                                </svg>
+                                Arquivada
+                            </span>
+                        )}
                         <button 
                             onClick={() => { setEditTitle(job.title); setIsEditingTitle(true); }}
                             className="text-xs text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -55,6 +66,26 @@ export function JobHeader({ job, availableStatuses, onChangeStatus, onUpdateJob,
             </div>
             
             <div className="flex items-center gap-3">
+                <button 
+                    onClick={() => onToggleArchiveJob(!job.isArchived)}
+                    title={job.isArchived ? "Desarquivar Vaga" : "Arquivar Vaga"}
+                    className="p-2 text-slate-500 hover:text-blue-400 hover:bg-slate-800 rounded-md transition-colors"
+                >
+                    {job.isArchived ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 8v13H3V8"></path>
+                            <path d="M1 3h22v5H1z"></path>
+                            <path d="M10 12h4"></path>
+                            <path d="m12 16 3-3-3-3-3 3z"></path>
+                        </svg>
+                    ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                            <rect x="1" y="3" width="22" height="5"></rect>
+                            <line x1="10" y1="12" x2="14" y2="12"></line>
+                        </svg>
+                    )}
+                </button>
                 <button 
                     onClick={onDeleteJob}
                     title="Excluir Vaga"

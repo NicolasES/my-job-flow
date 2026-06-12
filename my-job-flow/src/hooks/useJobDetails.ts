@@ -143,6 +143,18 @@ export function useJobDetails(id: string | undefined) {
         }
     }, [job?.id, toast]);
 
+    const toggleArchiveJob = useCallback(async (isArchived: boolean) => {
+        if (!job) return;
+        try {
+            await JobService.toggleArchive(job.id, isArchived);
+            setJob(prev => prev ? { ...prev, isArchived } : prev);
+            toast.success(isArchived ? "Vaga arquivada com sucesso." : "Vaga desarquivada com sucesso.");
+        } catch (err: any) {
+            console.error("Failed to toggle archive", err);
+            toast.error(`Erro ao ${isArchived ? 'arquivar' : 'desarquivar'} vaga: ${err.message}`);
+        }
+    }, [job?.id, toast]);
+
     const addContact = useCallback(async (contact: { name: string; role?: string; linkedin?: string; phone?: string }) => {
         if (!job) return;
         try {
@@ -240,6 +252,7 @@ export function useJobDetails(id: string | undefined) {
         deleteContact,
         addLink,
         updateLink,
-        deleteLink
+        deleteLink,
+        toggleArchiveJob
     };
 }

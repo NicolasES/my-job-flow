@@ -8,17 +8,19 @@ export type JobCardData = {
     location: string;
     date: string;
     statusId: number;
+    isArchived?: boolean;
 }
 
 export interface JobCardProps {
     jobData: JobCardData;
     availableStatuses: { id: number; name: string; }[];
-    onMoveJob: (id: number, newStatusId: number) => void;
+    onMoveJob?: (id: number, newStatusId: number) => void;
     onDeleteJob?: (id: number) => void;
+    onToggleArchiveJob?: (id: number, currentIsArchived: boolean) => void;
 }
 
-export function JobCard({ jobData, availableStatuses, onMoveJob, onDeleteJob }: JobCardProps) {
-    const { id, title, company, location, date, statusId } = jobData;
+export function JobCard({ jobData, availableStatuses, onMoveJob, onDeleteJob, onToggleArchiveJob }: JobCardProps) {
+    const { id, title, company, location, date, statusId, isArchived = false } = jobData;
     const navigate = useNavigate();
     const modal = useModal();
 
@@ -38,6 +40,23 @@ export function JobCard({ jobData, availableStatuses, onMoveJob, onDeleteJob }: 
         }
     };
 
+    const handleToggleArchive = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!onToggleArchiveJob) return;
+
+        const actionText = isArchived ? "desarquivar" : "arquivar";
+        const isConfirmed = await modal.confirm({
+            title: isArchived ? "Desarquivar Vaga" : "Arquivar Vaga",
+            message: `Tem certeza que deseja ${actionText} a vaga "${title}"?`,
+            confirmText: isArchived ? "Desarquivar" : "Arquivar",
+            variant: "primary"
+        });
+
+        if (isConfirmed) {
+            onToggleArchiveJob(id, !isArchived);
+        }
+    };
+
     return (
         <div 
             onClick={() => navigate(`/job/${id}`)}
@@ -49,6 +68,28 @@ export function JobCard({ jobData, availableStatuses, onMoveJob, onDeleteJob }: 
                 <h3 className="font-semibold text-slate-100 leading-tight">{title}</h3>
 
                 <div className="flex items-center gap-1">
+                    {onToggleArchiveJob && (
+                        <button
+                            onClick={handleToggleArchive}
+                            title={isArchived ? "Desarquivar vaga" : "Arquivar vaga"}
+                            className="p-1 rounded text-slate-500 hover:text-blue-400 hover:bg-slate-700 transition-colors"
+                        >
+                            {isArchived ? (
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M21 8v13H3V8"></path>
+                                    <path d="M1 3h22v5H1z"></path>
+                                    <path d="M10 12h4"></path>
+                                    <path d="m12 16 3-3-3-3-3 3z"></path>
+                                </svg>
+                            ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                                    <rect x="1" y="3" width="22" height="5"></rect>
+                                    <line x1="10" y1="12" x2="14" y2="12"></line>
+                                </svg>
+                            )}
+                        </button>
+                    )}
                     {onDeleteJob && (
                         <button
                             onClick={handleDelete}

@@ -25,6 +25,7 @@ export interface JobDetailsOutput {
     workModel: string;
     salary: number | null;
     description: string;
+    isArchived: boolean;
     appliedAt: string;
     createdAt: string;
     status: {
@@ -106,6 +107,13 @@ export class JobService {
     static async delete(id: number): Promise<void> {
         await fetchApi(`/jobs/${id}`, {
             method: 'DELETE'
+        });
+    }
+
+    static async toggleArchive(id: number, isArchived: boolean): Promise<void> {
+        await fetchApi(`/jobs/${id}/archive`, {
+            method: 'PATCH',
+            body: JSON.stringify({ isArchived })
         });
     }
 
