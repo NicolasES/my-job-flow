@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import type { SyntheticEvent } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { SelectInput } from "../components/form/SelectInput"
 import { SkillAutocomplete } from "../components/form/SkillAutocomplete"
@@ -14,6 +15,7 @@ import type { LinkItem } from "../components/form/DynamicLinkList"
 import { JobService, WORK_MODEL_OPTIONS } from "../services/JobService";
 import { SkillService } from '../services/SkillService'
 import type { Skill } from '../services/SkillService'
+import { JobStatusService } from "../services/JobStatusService";
 import { useToast } from "../contexts/ToastContext";
 
 export default function NewJob() {
@@ -25,13 +27,21 @@ export default function NewJob() {
     const [links, setLinks] = useState<LinkItem[]>([])
 
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [hasNoStatuses, setHasNoStatuses] = useState(false)
     const toast = useToast();
+    const navigate = useNavigate();
 
     useEffect(() => {
         SkillService.findAll()
             .then(setAvailableSkills)
-            .catch(err => console.error("Erro ao carregar skills", err))
-    }, [])
+            .catch(err => toast.error(`Erro ao carregar skills: ${err.message}`))
+
+        JobStatusService.findAll()
+            .then(statuses => {
+                if (statuses.length === 0) setHasNoStatuses(true);
+            })
+            .catch(err => toast.error(`Erro ao carregar statuses: ${err.message}`))
+    }, [toast])
 
     const handleCreateSkill = async (name: string): Promise<Skill> => {
         const newSkill = await SkillService.create(name);
@@ -80,8 +90,9 @@ export default function NewJob() {
         };
 
         try {
-            await JobService.create(data);
+            const createdJob = await JobService.create(data);
             toast.success("Vaga criada com sucesso!");
+            navigate(`/job/${createdJob.id}`);
         } catch (err: any) {
             toast.error(`Erro ao criar vaga: ${err.message}`);
         } finally {
@@ -93,10 +104,19 @@ export default function NewJob() {
     return (
         <div className="flex flex-col h-full p-8 overflow-y-auto custom-scrollbar">
             {/* Page Header */}
-            <div className="mb-8">
+            <div className="mb-6">
                 <h1 className="text-3xl font-semibold text-white">Cadastrar Nova Vaga</h1>
                 <p className="text-slate-400 mt-1">Registre as informações de uma nova candidatura</p>
             </div>
+
+            {hasNoStatuses && (
+                <div className="bg-orange-500/10 border border-orange-500/50 p-4 rounded-md mb-8 max-w-7xl">
+                    <p className="text-orange-400 font-medium">Atenção!</p>
+                    <p className="text-orange-300 text-sm mt-1">
+                        Você não possui nenhum Status cadastrado. Vá até a aba "Configurações" e adicione pelo menos um Status (ex: Enviado, Entrevista) antes de criar uma vaga.
+                    </p>
+                </div>
+            )}
 
             <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl">
 
@@ -232,8 +252,8 @@ export default function NewJob() {
                         </button>
                         <button
                             type="submit"
-                            disabled={isSubmitting}
-                            className={`px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-md transition-colors ${isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'}`}
+                            disabled={isSubmitting || hasNoStatuses}
+                            className={`px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-md transition-colors ${isSubmitting || hasNoStatuses ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'}`}
                         >
                             {isSubmitting ? 'Salvando...' : 'Salvar Vaga'}
                         </button>
