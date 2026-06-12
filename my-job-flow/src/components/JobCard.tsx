@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useModal } from "../contexts/ModalContext";
+import { ArchiveIcon, UnarchiveIcon, TrashIcon } from "./icons/Icons";
 
 export type JobCardData = {
     id: number;
@@ -74,20 +75,7 @@ export function JobCard({ jobData, availableStatuses, onMoveJob, onDeleteJob, on
                             title={isArchived ? "Desarquivar vaga" : "Arquivar vaga"}
                             className="p-1 rounded text-slate-500 hover:text-blue-400 hover:bg-slate-700 transition-colors"
                         >
-                            {isArchived ? (
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M21 8v13H3V8"></path>
-                                    <path d="M1 3h22v5H1z"></path>
-                                    <path d="M10 12h4"></path>
-                                    <path d="m12 16 3-3-3-3-3 3z"></path>
-                                </svg>
-                            ) : (
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <polyline points="21 8 21 21 3 21 3 8"></polyline>
-                                    <rect x="1" y="3" width="22" height="5"></rect>
-                                    <line x1="10" y1="12" x2="14" y2="12"></line>
-                                </svg>
-                            )}
+                            {isArchived ? <UnarchiveIcon size="14" /> : <ArchiveIcon size="14" />}
                         </button>
                     )}
                     {onDeleteJob && (
@@ -96,11 +84,7 @@ export function JobCard({ jobData, availableStatuses, onMoveJob, onDeleteJob, on
                             title="Excluir vaga"
                             className="p-1 rounded text-slate-500 hover:text-red-400 hover:bg-slate-700 transition-colors"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M3 6h18"></path>
-                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                            </svg>
+                            <TrashIcon size="14" />
                         </button>
                     )}
                     {onMoveJob && (

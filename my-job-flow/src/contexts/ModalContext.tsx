@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
 
 interface ConfirmOptions {
     title: string;
@@ -41,15 +41,32 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         });
     }, []);
 
-    const handleConfirm = () => {
+    const handleConfirm = useCallback(() => {
         setIsOpen(false);
         if (resolver.current) resolver.current(true);
-    };
+    }, []);
 
-    const handleCancel = () => {
+    const handleCancel = useCallback(() => {
         setIsOpen(false);
         if (resolver.current) resolver.current(false);
-    };
+    }, []);
+
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleConfirm();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                handleCancel();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isOpen, handleConfirm, handleCancel]);
 
     return (
         <ModalContext.Provider value={{ confirm }}>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { JobDetailsOutput } from "../../services/JobService";
 import type { JobStatus } from "../../services/JobStatusService";
 import { getWorkModelLabel } from "../../services/JobService";
+import { ArchiveIcon, UnarchiveIcon, TrashIcon } from "../icons/Icons";
 
 interface JobHeaderProps {
     job: JobDetailsOutput;
@@ -44,11 +45,7 @@ export function JobHeader({ job, availableStatuses, onChangeStatus, onUpdateJob,
                         <h1 className="text-3xl font-semibold text-white">{job.title}</h1>
                         {job.isArchived && (
                             <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 uppercase tracking-wide">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M21 8v13H3V8"></path>
-                                    <path d="M1 3h22v5H1z"></path>
-                                    <path d="M10 12h4"></path>
-                                </svg>
+                                <UnarchiveIcon size="12" />
                                 Arquivada
                             </span>
                         )}
@@ -71,31 +68,14 @@ export function JobHeader({ job, availableStatuses, onChangeStatus, onUpdateJob,
                     title={job.isArchived ? "Desarquivar Vaga" : "Arquivar Vaga"}
                     className="p-2 text-slate-500 hover:text-blue-400 hover:bg-slate-800 rounded-md transition-colors"
                 >
-                    {job.isArchived ? (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M21 8v13H3V8"></path>
-                            <path d="M1 3h22v5H1z"></path>
-                            <path d="M10 12h4"></path>
-                            <path d="m12 16 3-3-3-3-3 3z"></path>
-                        </svg>
-                    ) : (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <polyline points="21 8 21 21 3 21 3 8"></polyline>
-                            <rect x="1" y="3" width="22" height="5"></rect>
-                            <line x1="10" y1="12" x2="14" y2="12"></line>
-                        </svg>
-                    )}
+                    {job.isArchived ? <UnarchiveIcon size="18" /> : <ArchiveIcon size="18" />}
                 </button>
                 <button 
                     onClick={onDeleteJob}
                     title="Excluir Vaga"
                     className="p-2 text-slate-500 hover:text-red-400 hover:bg-slate-800 rounded-md transition-colors"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M3 6h18"></path>
-                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                    </svg>
+                    <TrashIcon size="18" />
                 </button>
 
                 {isEditingStatus ? (
