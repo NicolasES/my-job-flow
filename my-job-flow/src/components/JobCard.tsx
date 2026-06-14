@@ -59,35 +59,32 @@ export function JobCard({ jobData, availableStatuses, onMoveJob, onDeleteJob, on
     };
 
     return (
-        <div 
+        <div
             onClick={() => navigate(`/job/${id}`)}
             className="bg-slate-800 p-4 rounded-lg border border-slate-700 hover:border-slate-600 cursor-pointer transition-colors"
         >
 
-            {/* Title and Select Dropdown */}
-            <div className="flex justify-between items-start mb-2 gap-2">
-                <h3 className="font-semibold text-slate-100 leading-tight">{title}</h3>
-
-                <div className="flex items-center gap-1">
-                    {onToggleArchiveJob && (
-                        <button
-                            onClick={handleToggleArchive}
-                            title={isArchived ? "Desarquivar vaga" : "Arquivar vaga"}
-                            className="p-1 rounded text-slate-500 hover:text-blue-400 hover:bg-slate-700 transition-colors"
-                        >
-                            {isArchived ? <UnarchiveIcon size="14" /> : <ArchiveIcon size="14" />}
-                        </button>
-                    )}
-                    {onDeleteJob && (
-                        <button
-                            onClick={handleDelete}
-                            title="Excluir vaga"
-                            className="p-1 rounded text-slate-500 hover:text-red-400 hover:bg-slate-700 transition-colors"
-                        >
-                            <TrashIcon size="14" />
-                        </button>
-                    )}
-                    {onMoveJob && (
+            {/* Actions and Select Dropdown */}
+            <div className="flex justify-end items-center mb-2 gap-1">
+                {onToggleArchiveJob && (
+                    <button
+                        onClick={handleToggleArchive}
+                        title={isArchived ? "Desarquivar vaga" : "Arquivar vaga"}
+                        className="p-1 rounded text-slate-500 hover:text-blue-400 hover:bg-slate-700 transition-colors"
+                    >
+                        {isArchived ? <UnarchiveIcon size="14" /> : <ArchiveIcon size="14" />}
+                    </button>
+                )}
+                {onDeleteJob && (
+                    <button
+                        onClick={handleDelete}
+                        title="Excluir vaga"
+                        className="p-1 rounded text-slate-500 hover:text-red-400 hover:bg-slate-700 transition-colors"
+                    >
+                        <TrashIcon size="14" />
+                    </button>
+                )}
+                {onMoveJob && (
                     <select
                         className="bg-slate-900 text-xs text-slate-300 border border-slate-600 rounded p-1 focus:outline-none cursor-pointer"
                         value={statusId}
@@ -100,8 +97,10 @@ export function JobCard({ jobData, availableStatuses, onMoveJob, onDeleteJob, on
                         ))}
                     </select>
                 )}
-                </div>
             </div>
+
+            {/* Title */}
+            <h3 className="font-semibold text-slate-100 leading-tight mb-1 break-words">{title}</h3>
 
             <p className="text-sm text-slate-400">@ {company}</p>
 
