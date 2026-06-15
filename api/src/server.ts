@@ -6,5 +6,6 @@ const app = new Application()
 
 registerRoutes(app)
 
-app.start(3333)
+const port = Number(process.env.PORT) || 3333;
+app.start(port);
 
