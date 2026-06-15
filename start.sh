@@ -14,5 +14,17 @@ echo "Pressione [Ctrl + C] a qualquer momento para desligar os servidores."
 echo "==========================================="
 echo ""
 
+# Cria o .env da API se não existir
+if [ ! -f "api/.env" ]; then
+    echo "⚙️  Criando api/.env a partir do .env.example..."
+    cp api/.env.example api/.env
+fi
+
+# Cria o .env do Front-end se não existir
+if [ ! -f "my-job-flow/.env" ]; then
+    echo "🌐 Criando my-job-flow/.env a partir do .env.example..."
+    cp my-job-flow/.env.example my-job-flow/.env
+fi
+
 # Inicia os containers e prende o terminal (para poder parar com Ctrl+C)
 docker compose -f docker-compose.run.yaml up
