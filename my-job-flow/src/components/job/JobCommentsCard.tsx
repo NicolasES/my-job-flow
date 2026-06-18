@@ -84,7 +84,7 @@ export function JobCommentsCard({ comments, onAddComment, onRemoveComment, onEdi
                                 </div>
                             </div>
                         ) : (
-                            <p className="text-sm text-slate-200 mb-2 pr-12">
+                            <p className="text-sm text-slate-200 mb-2 pr-12 leading-relaxed whitespace-pre-wrap">
                                 {comment.text}
                             </p>
                         )}

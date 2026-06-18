@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { JobDetailsOutput } from "../../services/JobService";
 import type { JobStatus } from "../../services/JobStatusService";
 import { getWorkModelLabel } from "../../services/JobService";
-import { ArchiveIcon, UnarchiveIcon, TrashIcon } from "../icons/Icons";
+import { ArchiveIcon, UnarchiveIcon, TrashIcon, CommentIcon } from "../icons/Icons";
 
 interface JobHeaderProps {
     job: JobDetailsOutput;
@@ -11,9 +11,10 @@ interface JobHeaderProps {
     onUpdateJob: (updater: (prev: JobDetailsOutput) => JobDetailsOutput) => void;
     onDeleteJob: () => void;
     onToggleArchiveJob: (isArchived: boolean) => void;
+    commentsCount?: number;
 }
 
-export function JobHeader({ job, availableStatuses, onChangeStatus, onUpdateJob, onDeleteJob, onToggleArchiveJob }: JobHeaderProps) {
+export function JobHeader({ job, availableStatuses, onChangeStatus, onUpdateJob, onDeleteJob, onToggleArchiveJob, commentsCount }: JobHeaderProps) {
     const [isEditingStatus, setIsEditingStatus] = useState(false);
     const [isEditingTitle, setIsEditingTitle] = useState(false);
     const [editTitle, setEditTitle] = useState("");
@@ -57,8 +58,19 @@ export function JobHeader({ job, availableStatuses, onChangeStatus, onUpdateJob,
                         </button>
                     </div>
                 )}
-                <p className="text-slate-400 mt-1">
-                    {job.company} • {getWorkModelLabel(job.workModel)}
+                <p className="text-slate-400 mt-1 flex items-center gap-2">
+                    <span>{job.company}</span>
+                    <span>•</span>
+                    <span>{getWorkModelLabel(job.workModel)}</span>
+                    {commentsCount !== undefined && (
+                        <>
+                            <span>•</span>
+                            <span className="flex items-center gap-1.5 text-sky-400">
+                                <CommentIcon size="16" />
+                                {commentsCount} {commentsCount === 1 ? 'comentário' : 'comentários'}
+                            </span>
+                        </>
+                    )}
                 </p>
             </div>
             

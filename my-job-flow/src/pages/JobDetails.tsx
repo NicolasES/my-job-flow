@@ -123,6 +123,7 @@ export default function JobDetails() {
                 onUpdateJob={updateJob}
                 onDeleteJob={handleDeleteJob}
                 onToggleArchiveJob={toggleArchiveJob}
+                commentsCount={comments.length}
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl">
